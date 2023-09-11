@@ -4,10 +4,12 @@ import { DataSet, Network } from "vis";
 import Navbar from "../components/Navbar";
 import Button from "@mui/material/Button";
 import pb from "../lib/pocketbase";
+import PersistentDrawerLeft from "../components/NavbarDrawer";
 
 const options = {
   layout: {
     randomSeed: 2,
+    improvedLayout: false,
   },
   nodes: {
     fixed: {
@@ -21,7 +23,12 @@ const options = {
     shapeProperties: {
       interpolation: false,
     },
-    color: "#ffffff",
+    color: {
+      background: "#fff",
+      border: "#8DDFCB",
+      highlight: "#797979",
+    },
+
     size: 20,
     borderWidth: 1.5,
     borderWidthSelected: 2,
@@ -38,13 +45,12 @@ const options = {
   },
 
   edges: {
-    width: 1,
-    // color: {
-    //   color: "#D0D0D0",
-    //   highlight: "#797979",
-    //   hover: "#797979",
-    //   opacity: 1.0,
-    // },
+    width: 2,
+    color: {
+      color: "#D0D0D0",
+      highlight: "#797979",
+      hover: "#797979",
+    },
     arrows: {
       to: { enabled: true, scaleFactor: 1, type: "arrow" },
       middle: { enabled: false, scaleFactor: 1, type: "arrow" },
@@ -60,8 +66,9 @@ const options = {
     adaptiveTimestep: true,
     barnesHut: {
       gravitationalConstant: -8000,
+      centralGravity: 0.02, //
       springConstant: 0.04,
-      springLength: 200,
+      springLength: 100,
     },
     stabilization: {
       iterations: 987,
@@ -122,16 +129,52 @@ export default function Map() {
     fetchData();
   }, []); // B
 
+  const likeNode = (nodeId) => {
+    const updatedNode = network.body.data.nodes.get(nodeId);
+
+    if (updatedNode) {
+      updatedNode.color = "#8DDFCB";
+      network.body.data.nodes.update(updatedNode);
+    }
+  };
+
+  const notrNode = (nodeId) => {
+    const updatedNode = network.body.data.nodes.get(nodeId);
+
+    if (updatedNode) {
+      updatedNode.color = "#D2DE32";
+      network.body.data.nodes.update(updatedNode);
+    }
+  };
+
+  const dislikeNode = (nodeId) => {
+    const updatedNode = network.body.data.nodes.get(nodeId);
+
+    if (updatedNode) {
+      updatedNode.color = "#C63D2F";
+      network.body.data.nodes.update(updatedNode);
+    }
+  };
+
   useEffect(() => {
     if (network) {
       network.on("click", async function (params) {
         // var clickedNodeId = params.nodes[0];
         if (params.nodes.length > 0) {
+          likeNode(params.nodes[0]);
+
+          network.body.data.nodes.map((node) => {
+            if (node.id === params.nodes[0]) {
+
+              console.log("asd")
+              return { ...node, color: 'blue' };
+            }
+            return node;
+          });
+
           const record = await pb.collection("nodes").getOne(params.nodes[0]);
 
-          
-
-          console.log(record)
+          console.log(record);
 
           for (let i = 0; i < record.neighbour_nodes.length; i++) {
             console.log(record.neighbour_nodes[i]);
@@ -183,7 +226,7 @@ export default function Map() {
 
   return (
     <>
-      <Navbar setSearchId={setSearchId} />
+      <PersistentDrawerLeft />
 
       <Button
         variant="contained"
@@ -194,7 +237,7 @@ export default function Map() {
           bottom: "10%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          backgroundColor: "#D67BFF",
+          backgroundColor: "#FFCC70",
         }}
       >
         Search Topic

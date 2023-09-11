@@ -1,14 +1,15 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
+import React, { useState } from "react";
+import ReactDOM from "react-dom/client";
 import Root from "./routes/root";
 import ErrorPage from "./error-page";
 import Map from "./routes/map";
-import "./main.css"
+import "./main.css";
+import Profile from "./routes/profile";
+import Settings from "./routes/settings";
 
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+
+import { MyProvider } from "./UserContext";
 
 const router = createBrowserRouter([
   {
@@ -22,15 +23,26 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
   },
   {
+    path: "profile",
+    element: <Profile />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "settings",
+    element: <Settings />,
+    errorElement: <ErrorPage />,
+  },
+  {
     path: "profile/:username",
     element: <Map />,
     errorElement: <ErrorPage />,
   },
 ]);
 
-
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>,
-)
+    <MyProvider>
+      <RouterProvider router={router} />
+    </MyProvider>
+  </React.StrictMode>
+);

@@ -37,10 +37,6 @@ const SearchModal = ({ isOpen, onClose,setSearchId }) => {
   }, [searchQuery]);
 
   const handleRecordClick = (record) => {
-
-    
-
-
     setSearchId(record)
   };
 
@@ -81,7 +77,6 @@ const SearchModal = ({ isOpen, onClose,setSearchId }) => {
         {searchResults.map((record) => (
           <div key={record.id}>
             <Typography variant="body2">{record.title}</Typography>
-            {/* Her kayıt için bir düğme ekleyin */}
             <Button
               variant="outlined"
               onClick={() => handleRecordClick(record)}

@@ -1,8 +1,6 @@
 import * as React from "react";
-import PropTypes from "prop-types";
 import { Global } from "@emotion/react";
 import { styled } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
 import { grey } from "@mui/material/colors";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
@@ -15,7 +13,7 @@ import InfoCard from "./InfoCard";
 const drawerBleeding = 56;
 
 const Root = styled("div")(({ theme }) => ({
-  height: "100%",
+  height: "50%",
   backgroundColor:
     theme.palette.mode === "light"
       ? grey[100]
@@ -26,8 +24,6 @@ const StyledBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "light" ? "#fff" : grey[800],
 }));
 
-
-
 function shortenText(text, maxLength) {
   if (text.length > maxLength) {
     return text.substring(0, maxLength) + "...";
@@ -35,9 +31,10 @@ function shortenText(text, maxLength) {
   return text;
 }
 const maxLength = 30;
-const shortenedURL = shortenText("https://en.wikipedia.org/wiki/Computer_engineering", maxLength);
-
-
+const shortenedURL = shortenText(
+  "https://en.wikipedia.org/wiki/Computer_engineering",
+  maxLength
+);
 
 const Puller = styled(Box)(({ theme }) => ({
   width: 30,
@@ -49,31 +46,20 @@ const Puller = styled(Box)(({ theme }) => ({
   left: "calc(50% - 15px)",
 }));
 
-function SwipeableEdgeDrawer(props) {
-  const { window } = props;
-  const [open, setOpen] = React.useState(false);
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-const handleClick = (event) => {
-  setAnchorEl(event.currentTarget);
-};
-
-const handleClose = () => {
-  setAnchorEl(null);
-};
+export default function SwipeableEdgeDrawer({
+  open,
+  setOpen,
+  likeNode,
+  notrNode,
+  dislikeNode,
+}) {
 
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
 
-  // This is used only for the example
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
-
   return (
     <Root>
-      <CssBaseline />
       <Global
         styles={{
           ".MuiDrawer-root > .MuiPaper-root": {
@@ -82,11 +68,7 @@ const handleClose = () => {
           },
         }}
       />
-      <Box sx={{ textAlign: "center", pt: 1 }}>
-        <Button onClick={toggleDrawer(true)}>Open</Button>
-      </Box>
       <SwipeableDrawer
-        container={container}
         anchor="bottom"
         open={open}
         onClose={toggleDrawer(false)}
@@ -99,11 +81,11 @@ const handleClose = () => {
       >
         <StyledBox
           sx={{
-            position: "absolute",
-            top: -drawerBleeding,
+            position: 'relative',
+            marginTop: `${-drawerBleeding}px`,
             borderTopLeftRadius: 8,
             borderTopRightRadius: 8,
-            visibility: "visible",
+            visibility: 'visible',
             right: 0,
             left: 0,
           }}
@@ -133,16 +115,33 @@ const handleClose = () => {
               sx={{
                 marginBottom: "12px",
                 marginTop: "8px",
-                
               }}
             >
-              <Button variant="contained" size="small" color="success" sx={{marginRight: "8px"}}>
+              <Button
+                variant="contained"
+                size="small"
+                color="success"
+                sx={{ marginRight: "8px" }}
+                onClick={likeNode}
+              >
                 Like
               </Button>
-              <Button variant="contained" size="small" color="warning" sx={{marginRight: "8px"}}>
+              <Button
+                variant="contained"
+                size="small"
+                color="warning"
+                sx={{ marginRight: "8px" }}
+                onClick={notrNode}
+              >
                 Notr
               </Button>
-              <Button variant="contained" size="small" color="error" sx={{marginRight: "8px"}}>
+              <Button
+                variant="contained"
+                size="small"
+                color="error"
+                sx={{ marginRight: "8px" }}
+                onClick={dislikeNode}
+              >
                 Dislike
               </Button>
             </Box>
@@ -179,22 +178,11 @@ const handleClose = () => {
               engineering.
             </Typography>
 
-            <InfoCard/>
-            <InfoCard/>
-            
+            <InfoCard />
+            <InfoCard />
           </StyledBox>
         </div>
       </SwipeableDrawer>
     </Root>
   );
 }
-
-SwipeableEdgeDrawer.propTypes = {
-  /**
-   * Injected by the documentation to work in an iframe.
-   * You won't need it on your project.
-   */
-  window: PropTypes.func,
-};
-
-export default SwipeableEdgeDrawer;

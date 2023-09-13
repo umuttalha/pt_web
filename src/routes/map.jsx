@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router";
 import { DataSet, Network } from "vis";
-import Navbar from "../components/Navbar";
 import Button from "@mui/material/Button";
 import pb from "../lib/pocketbase";
 import PersistentDrawerLeft from "../components/NavbarDrawer";
+import SwipeableEdgeDrawer from "../components/InfoDrawer";
 
 const options = {
   layout: {
@@ -26,7 +26,7 @@ const options = {
     color: {
       background: "#fff",
       border: "#8DDFCB",
-      highlight: "#797979",
+      // highlight: "#8DDFCB",
     },
 
     size: 20,
@@ -45,7 +45,7 @@ const options = {
   },
 
   edges: {
-    width: 2,
+    width: 1.5,
     color: {
       color: "#D0D0D0",
       highlight: "#797979",
@@ -89,9 +89,11 @@ export default function Map() {
 
   const containerRef = useRef(null);
 
+  const [open, setOpen] = useState(false);
   const [network, setNetwork] = useState(null);
-
   const [searchId, setSearchId] = useState("");
+
+  const [openNode, setOpenNode] = useState(null);
 
   useEffect(() => {
     if (searchId != "") {
@@ -129,26 +131,28 @@ export default function Map() {
     fetchData();
   }, []); // B
 
-  const likeNode = (nodeId) => {
-    const updatedNode = network.body.data.nodes.get(nodeId);
+  const likeNode = () => {
+    const updatedNode = network.body.data.nodes.get(openNode);
 
     if (updatedNode) {
       updatedNode.color = "#8DDFCB";
       network.body.data.nodes.update(updatedNode);
     }
+    getNeighbour(openNode)
   };
 
-  const notrNode = (nodeId) => {
-    const updatedNode = network.body.data.nodes.get(nodeId);
+  const notrNode = () => {
+    const updatedNode = network.body.data.nodes.get(openNode);
 
     if (updatedNode) {
       updatedNode.color = "#D2DE32";
       network.body.data.nodes.update(updatedNode);
     }
+    getNeighbour(openNode)
   };
 
-  const dislikeNode = (nodeId) => {
-    const updatedNode = network.body.data.nodes.get(nodeId);
+  const dislikeNode = () => {
+    const updatedNode = network.body.data.nodes.get(openNode);
 
     if (updatedNode) {
       updatedNode.color = "#C63D2F";
@@ -156,47 +160,48 @@ export default function Map() {
     }
   };
 
+  const getNeighbour = async (nodeId) => {
+
+    network.body.data.nodes.map((node) => {
+      if (node.id === nodeId) {
+        return { ...node, color: "blue" };
+      }
+      return node;
+    });
+
+    const record = await pb.collection("nodes").getOne(nodeId);
+
+
+    for (let i = 0; i < record.neighbour_nodes.length; i++) {
+      const komsu_node = await pb
+        .collection("nodes")
+        .getOne(record.neighbour_nodes[i]);
+
+      try {
+        network.body.data.nodes.add({
+          id: komsu_node.id,
+          label: komsu_node.title,
+        });
+      } catch {}
+
+      try {
+        network.body.data.edges.add({
+          from: komsu_node.id,
+          to: record.id,
+        });
+      } catch {}
+    }
+  };
+
   useEffect(() => {
     if (network) {
       network.on("click", async function (params) {
         // var clickedNodeId = params.nodes[0];
+
         if (params.nodes.length > 0) {
-          likeNode(params.nodes[0]);
-
-          network.body.data.nodes.map((node) => {
-            if (node.id === params.nodes[0]) {
-
-              console.log("asd")
-              return { ...node, color: 'blue' };
-            }
-            return node;
-          });
-
-          const record = await pb.collection("nodes").getOne(params.nodes[0]);
-
-          console.log(record);
-
-          for (let i = 0; i < record.neighbour_nodes.length; i++) {
-            console.log(record.neighbour_nodes[i]);
-
-            const komsu_node = await pb
-              .collection("nodes")
-              .getOne(record.neighbour_nodes[i]);
-
-            try {
-              network.body.data.nodes.add({
-                id: komsu_node.id,
-                label: komsu_node.title,
-              });
-            } catch {}
-
-            try {
-              network.body.data.edges.add({
-                from: komsu_node.id,
-                to: record.id,
-              });
-            } catch {}
-          }
+          setOpenNode(params.nodes[0]);
+          setOpen(true);
+          
         }
       });
     }
@@ -226,7 +231,7 @@ export default function Map() {
 
   return (
     <>
-      <PersistentDrawerLeft />
+      <PersistentDrawerLeft setSearchId={setSearchId} />
 
       <Button
         variant="contained"
@@ -242,7 +247,17 @@ export default function Map() {
       >
         Search Topic
       </Button>
-      <div ref={containerRef} style={{ width: "100%", height: "100vh" }} />
+      <SwipeableEdgeDrawer
+        open={open}
+        setOpen={setOpen}
+        likeNode={likeNode}
+        notrNode={notrNode}
+        dislikeNode={dislikeNode}
+      />
+      <div
+        ref={containerRef}
+        style={{ width: "100%", height: "calc(100vh - 110px)" }}
+      />
     </>
   );
 }

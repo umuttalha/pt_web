@@ -1,0 +1,25 @@
+.team-heading {
+    font-size: 24px; /* Başlık font boyutu */
+    color: #333; /* Başlık rengi */
+}
+
+.team-name {
+    color: #e74c3c; /* Team kelimesi başlangıç rengi */
+    font-weight: bold; /* Team kelimesi kalın yazı tipi */
+    animation: colorChange 6s infinite; /* Renk geçiş animasyonu */
+}
+
+@keyframes colorChange {
+    0% {
+        color: #e74c3c; /* Başlangıç rengi */
+    }
+    33% {
+        color: #27ae60; /* İlk renk değişimi */
+    }
+    66% {
+        color: #f39c12; /* İkinci renk değişimi */
+    }
+    100% {
+        color: #e74c3c; /* Döngüyü tamamlarken başlangıç rengine dönün */
+    }
+}

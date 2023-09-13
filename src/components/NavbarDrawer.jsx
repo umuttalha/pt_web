@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState } from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Drawer from "@mui/material/Drawer";
-import CssBaseline from "@mui/material/CssBaseline";
 import MuiAppBar from "@mui/material/AppBar";
 import Toolbar from "@mui/material/Toolbar";
 import List from "@mui/material/List";
@@ -16,14 +15,13 @@ import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
 import HomeIcon from "@mui/icons-material/Home";
 import MapIcon from "@mui/icons-material/Map";
 import SettingsIcon from "@mui/icons-material/Settings";
 import SearchIcon from "@mui/icons-material/Search";
 import { Button } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import LoginIcon from "@mui/icons-material/Login";
 
 import { useMyContext } from "../UserContext";
 
@@ -59,6 +57,7 @@ const AppBar = styled(MuiAppBar, {
 })(({ theme, open }) => ({
   //renk
   backgroundColor: "#82A0D8",
+  height: "64px",
   transition: theme.transitions.create(["margin", "width"], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -88,7 +87,6 @@ export default function PersistentDrawerLeft({ setSearchId }) {
 
   const { user, setUser } = useMyContext();
 
-  console.log(user);
   // const [user, setUser] = useState(pb.authStore.model);
 
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
@@ -96,7 +94,6 @@ export default function PersistentDrawerLeft({ setSearchId }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const openSearchModal = () => {
-    console.log("sea");
     setIsSearchModalOpen(true);
   };
 
@@ -130,18 +127,23 @@ export default function PersistentDrawerLeft({ setSearchId }) {
 
   return (
     <Box sx={{ display: "flex" }}>
-      <CssBaseline />
+      {/* <CssBaseline /> */}
       <AppBar position="fixed" open={open}>
         <Toolbar>
-          <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            sx={{ mr: 2, ...(open && { display: "none" }) }}
-          >
-            <MenuIcon />
-          </IconButton>
+          {user ? (
+            <IconButton
+              color="inherit"
+              aria-label="open drawer"
+              onClick={handleDrawerOpen}
+              edge="start"
+              sx={{ mr: 2, ...(open && { display: "none" }) }}
+            >
+              <MenuIcon />
+            </IconButton>
+          ) : (
+            <></>
+          )}
+
           <Typography variant="h6" noWrap component="div">
             <Link to="/" style={{ textDecoration: "none", color: "white" }}>
               <img
@@ -169,17 +171,33 @@ export default function PersistentDrawerLeft({ setSearchId }) {
               <SearchIcon />
             </Button>
           ) : (
-            // <ListItem button onClick={handleLogout}>
-
-            //   <ListItemText primary="Logout" sx={{ color: "red" ,marginLeft: '2px' }} />
-
+            <Button
+              variant="contained"
+              sx={{ marginLeft: "auto", marginRight: "0" }}
+              onClick={handleOpenModal}
+            >
+              <LoginIcon sx={{marginRight:1}}/> Start
+            </Button>
+            // <ListItem key={"Start"} disablePadding>
+            //   <ListItemButton
+            //     sx={{
+            //       backgroundColor: "black",
+            //       color: "white",
+            //       borderRadius: 3,
+            //       margin: 1,
+            //       "&:hover": {
+            //         backgroundColor: "black",
+            //       },
+            //     }}
+            //   >
+            //     <ListItemText
+            //       primary={"Login & Sign Up"}
+            //       sx={{ textAlign: "center" }}
+            //     />
+            //   </ListItemButton>
             // </ListItem>
-            <>
-              <ListItem button onClick={handleOpenModal}>
-                <ListItemText primary="Sign in" />
-              </ListItem>
-            </>
           )}
+
           <SignInModal
             setModalOpen={setModalOpen}
             isOpen={isModalOpen}
@@ -212,57 +230,67 @@ export default function PersistentDrawerLeft({ setSearchId }) {
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <List>
-          <Link to="/" style={{ textDecoration: "none", color: "black" }}>
-            <ListItem key={"Home"} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  <HomeIcon />
-                </ListItemIcon>
-                <ListItemText primary={"Home"} />
-              </ListItemButton>
-            </ListItem>
-          </Link>
-          <Link to="/map" style={{ textDecoration: "none", color: "black" }}>
-            <ListItem key={"Map"} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  <MapIcon />
-                </ListItemIcon>
-                <ListItemText primary={"Map"} />
-              </ListItemButton>
-            </ListItem>
-          </Link>
-          <Link
-            to="/profile"
-            style={{ textDecoration: "none", color: "black" }}
-          >
-            <ListItem key={"Profile"} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  <AccountCircleIcon />
-                </ListItemIcon>
-                <ListItemText primary={"Profile"} />
-              </ListItemButton>
-            </ListItem>
-          </Link>
-        </List>
-        <Divider />
-        <List>
-          <Link
-            to="/settings"
-            style={{ textDecoration: "none", color: "black" }}
-          >
-            <ListItem key={"Settings"} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  <SettingsIcon />
-                </ListItemIcon>
-                <ListItemText primary={"Settings"} />
-              </ListItemButton>
-            </ListItem>
-          </Link>
-        </List>
+
+        {user ? (
+          <>
+            <List>
+              <Link to="/" style={{ textDecoration: "none", color: "black" }}>
+                <ListItem key={"Home"} disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <HomeIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Home"} />
+                  </ListItemButton>
+                </ListItem>
+              </Link>
+              <Link
+                to="/map"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <ListItem key={"Map"} disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <MapIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Map"} />
+                  </ListItemButton>
+                </ListItem>
+              </Link>
+              <Link
+                to="/profile"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <ListItem key={"Profile"} disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <AccountCircleIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Profile"} />
+                  </ListItemButton>
+                </ListItem>
+              </Link>
+            </List>
+            <Divider />
+            <List>
+              <Link
+                to="/settings"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <ListItem key={"Settings"} disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <SettingsIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Settings"} />
+                  </ListItemButton>
+                </ListItem>
+              </Link>
+            </List>
+          </>
+        ) : (
+          <></>
+        )}
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
@@ -270,8 +298,6 @@ export default function PersistentDrawerLeft({ setSearchId }) {
           setModalOpen={setModalOpen}
           isOpen={isModalOpen}
           onClose={handleCloseModal}
-          setUser={setUser}
-          setIsDrawerOpen={setIsDrawerOpen}
         />
         <SearchModal
           isOpen={isSearchModalOpen}

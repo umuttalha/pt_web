@@ -13,9 +13,11 @@ import {
 import GoogleIcon from "@mui/icons-material/Google";
 import FacebookIcon from "@mui/icons-material/Facebook";
 
+import { useMyContext } from "../UserContext";
+
 import pb from "../lib/pocketbase";
 
-function CustomTabPanel({ setModalOpen, isOpen, onClose, setUser,setIsDrawerOpen }) {
+function SignInModal({ setModalOpen, isOpen, onClose }) {
   const [value, setValue] = useState(0);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
@@ -25,6 +27,8 @@ function CustomTabPanel({ setModalOpen, isOpen, onClose, setUser,setIsDrawerOpen
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordsMatch, setPasswordsMatch] = useState(true);
   const [alertMessage, setAlertMessage] = useState("");
+
+  const { user, setUser } = useMyContext();
 
   const handleTabChange = (event, newValue) => {
     setValue(newValue);
@@ -37,7 +41,7 @@ function CustomTabPanel({ setModalOpen, isOpen, onClose, setUser,setIsDrawerOpen
         .authWithPassword(loginEmail, loginPassword)
         .then(() => setUser(pb.authStore.model));
       setModalOpen(false);
-      setIsDrawerOpen(false)
+      // setIsDrawerOpen(false)
       setLoginPassword("");
       setLoginEmail("");
       setAlertMessage("")
@@ -51,7 +55,7 @@ function CustomTabPanel({ setModalOpen, isOpen, onClose, setUser,setIsDrawerOpen
       setPasswordsMatch(false);
     } else {
       setPasswordsMatch(true);
-      setIsDrawerOpen(false)
+      // setIsDrawerOpen(false)
     }
   };
 
@@ -183,4 +187,4 @@ function CustomTabPanel({ setModalOpen, isOpen, onClose, setUser,setIsDrawerOpen
   );
 }
 
-export default CustomTabPanel;
+export default SignInModal;

@@ -1,30 +1,16 @@
 import * as React from "react";
-import PropTypes from "prop-types";
-import { Global } from "@emotion/react";
-import { styled } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import { grey } from "@mui/material/colors";
-import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
-import Container from "@mui/material/Container";
 import Typography from "@mui/material/Typography";
-import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Chip from "@mui/material/Chip";
-import Grid from "@mui/material/Grid";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
-
-import { IconButton, Menu, MenuItem, Link } from "@mui/material";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import ReportIcon from "@mui/icons-material/Report";
-import ReportGmailerrorredIcon from "@mui/icons-material/ReportGmailerrorred";
+import { Menu, MenuItem, Link } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import BugReportIcon from "@mui/icons-material/BugReport";
 import PestControlIcon from "@mui/icons-material/PestControl";
-import { Info } from "@mui/icons-material";
 
 const InfoCard = () => {
   function shortenText(text, maxLength) {

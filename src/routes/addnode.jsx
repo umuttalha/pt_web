@@ -76,7 +76,6 @@ export default function AddNode() {
             value={formData.firstName}
             onChange={handleInputChange}
             fullWidth
-            margin="normal"
           />
           <InputLabel htmlFor="lastName" sx={{marginTop:1}}>
             Subtopic Examples(not required)
@@ -87,7 +86,6 @@ export default function AddNode() {
             value={formData.lastName}
             onChange={handleInputChange}
             fullWidth
-            margin="normal"
           />
           <Button
             type="submit"

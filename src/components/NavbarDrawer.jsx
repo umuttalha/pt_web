@@ -22,6 +22,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Button } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LoginIcon from "@mui/icons-material/Login";
+import FlagIcon from '@mui/icons-material/Flag';
 
 import { useMyContext } from "../UserContext";
 
@@ -283,6 +284,20 @@ export default function PersistentDrawerLeft({ setSearchId }) {
                       <SettingsIcon />
                     </ListItemIcon>
                     <ListItemText primary={"Settings"} />
+                  </ListItemButton>
+                </ListItem>
+              </Link>
+
+              <Link
+                to="/addnode"
+                style={{ textDecoration: "none", color: "black" }}
+              >
+                <ListItem key={"Add Node"} disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <FlagIcon />
+                    </ListItemIcon>
+                    <ListItemText primary={"Add Node"} />
                   </ListItemButton>
                 </ListItem>
               </Link>

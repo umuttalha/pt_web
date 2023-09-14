@@ -6,6 +6,7 @@ import Map from "./routes/map";
 import "./main.css";
 import Profile from "./routes/profile";
 import Settings from "./routes/settings";
+import AddNode from "./routes/addnode";
 
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
@@ -30,6 +31,11 @@ const router = createBrowserRouter([
   {
     path: "settings",
     element: <Settings />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "addnode",
+    element: <AddNode />,
     errorElement: <ErrorPage />,
   },
   {

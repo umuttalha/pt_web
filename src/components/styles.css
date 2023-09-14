@@ -12,13 +12,13 @@ body {
     --orange: #fd7702;
     --yellow: #ffbb00;
   
-    --background: var(--purple);
+    /* --background: var(--purple); */
     --accent: var(--white);
   
     margin: 0;
     padding: 0;
     background-color: var(--background);
-    color: var(--accent);
+    /* color: var(--accent); */
   }
   
   * {

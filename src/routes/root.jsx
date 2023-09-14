@@ -2,7 +2,7 @@ import React from "react";
 import PersistentDrawerLeft from "../components/NavbarDrawer";
 import { Grid, Paper, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-
+import SlidingText from "../components/SlidingText"
 
 import "./root.css";
 
@@ -21,9 +21,9 @@ export default function Root() {
 
       {/* <SlidingText/> */}
 
-      <Typography variant="h1" component="h2">
+      {/* <Typography variant="h1" component="h2">
         <span className="team-name">P</span>azar <span className="team-name">Team</span>
-      </Typography>
+      </Typography> */}
 
       <Grid container spacing={2}>
         <Grid item xs={12} md={8}>

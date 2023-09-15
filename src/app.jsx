@@ -19,7 +19,7 @@ function App() {
         <Route path="profile" element={user ? <Profile /> : <Navigate to="/" />} />
         <Route path="settings" element={user ? <Settings /> : <Navigate to="/" />} />
         <Route path="addnode" element={user ? <AddNode /> : <Navigate to="/" />} />
-        <Route path="profile/:username" element={<Profile />} />
+        <Route path=":username" element={<Profile />} />
         {/* <Route path="login" element={<UserAuthentication />} /> */}
         <Route path="*" element={<ErrorPage />} />
       </Routes>

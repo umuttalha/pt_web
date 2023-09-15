@@ -2,7 +2,7 @@ import PersistentDrawerLeft from "../components/NavbarDrawer";
 
 import pb from "../lib/pocketbase";
 import { useMyContext } from "../UserContext";
-import { Link } from "react-router-dom";
+import { Link,useParams } from "react-router-dom";
 import InfoCard from "../components/InfoCard";
 
 import {
@@ -35,6 +35,12 @@ function CenteredBox({ children }) {
 }
 export default function Profile() {
   const { user } = useMyContext();
+
+  let { username } = useParams();
+
+  console.log(username)
+
+  // if username not exist return 404 page yoksa normak alttaki conponenti return de
 
   return (
     <>

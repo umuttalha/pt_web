@@ -56,6 +56,36 @@ const InfoCard = () => {
             Word of the Day
           </Typography>
         </Box>
+        <Box
+          display="flex"
+          alignItems="center"
+          sx={{ marginLeft: "-4px", marginBottom: "4px" }}
+        >
+          <Box sx={{ display: "flex", flexWrap: "wrap" }}>
+            <Chip
+              label="Chip Outlined"
+              variant="outlined"
+              style={{ height: "20px", marginRight: 3 }}
+            />
+            <Chip
+              label="Chip falined"
+              variant="outlined"
+              style={{ height: "20px", marginRight: 3 }}
+            />
+            <Chip
+              label="Chip Outlined"
+              variant="outlined"
+              style={{ height: "20px", marginRight: 3 }}
+            />
+            <Chip
+              label="Chip Outl"
+              variant="outlined"
+              style={{ height: "20px", marginRight: 3 }}
+            />
+
+          </Box>
+        </Box>
+
         <Typography variant="body2" sx={{ fontSize: "16px" }}>
           Computational biology refers to the use of data analysis, mathematical
           modeling and computational simulationsComputational biology refers to
@@ -67,8 +97,8 @@ const InfoCard = () => {
             color: "#717171",
             fontSize: "12px",
             marginRight: "6px",
-            marginTop:"16px",
-            display:"inline-block"
+            marginTop: "16px",
+            display: "inline-block",
           }}
         >
           Link:
@@ -105,27 +135,26 @@ const InfoCard = () => {
           <ArrowCircleUpIcon sx={{ cursor: "pointer" }} />
           <span style={{ fontSize: 14 }}>12</span>
           <ArrowCircleDownIcon sx={{ cursor: "pointer" }} />
-          
         </Box>
         <MoreHorizIcon
-            fontSize="small"
-            sx={{ marginTop: "20px", cursor: "pointer" }}
-            onClick={handleClick}
-          />
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-            <MenuItem onClick={handleClose}>
-              <BugReportIcon />
-              Irrelevant
-            </MenuItem>
-            <MenuItem onClick={handleClose}>
-              <PestControlIcon />
-              Inappropriate
-            </MenuItem>
-          </Menu>
+          fontSize="small"
+          sx={{ marginTop: "20px", cursor: "pointer" }}
+          onClick={handleClick}
+        />
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleClose}
+        >
+          <MenuItem onClick={handleClose}>
+            <BugReportIcon />
+            Irrelevant
+          </MenuItem>
+          <MenuItem onClick={handleClose}>
+            <PestControlIcon />
+            Inappropriate
+          </MenuItem>
+        </Menu>
       </CardActions>
     </Card>
   );

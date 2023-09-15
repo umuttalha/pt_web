@@ -9,9 +9,7 @@ import AddNode from "./routes/addnode";
 import { useMyContext } from "./UserContext";
 
 function App() {
-    const { user } = useMyContext();
-
-    console.log(user)
+  const { user } = useMyContext();
 
   return (
     <Router>
@@ -21,7 +19,7 @@ function App() {
         <Route path="profile" element={user ? <Profile /> : <Navigate to="/" />} />
         <Route path="settings" element={user ? <Settings /> : <Navigate to="/" />} />
         <Route path="addnode" element={user ? <AddNode /> : <Navigate to="/" />} />
-        <Route path="profile/:username" element={user ? <Map /> : <Navigate to="/" />} />
+        <Route path="profile/:username" element={<Profile />} />
         {/* <Route path="login" element={<UserAuthentication />} /> */}
         <Route path="*" element={<ErrorPage />} />
       </Routes>

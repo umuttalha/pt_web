@@ -3,11 +3,8 @@ import { useParams } from "react-router";
 import { DataSet, Network } from "vis";
 import Button from "@mui/material/Button";
 import pb from "../lib/pocketbase";
-import PersistentDrawerLeft from "../components/NavbarDrawer";
-import SwipeableEdgeDrawer from "../components/InfoDrawer";
-import ZoomInIcon from '@mui/icons-material/ZoomIn';
-import ZoomOutIcon from '@mui/icons-material/ZoomOut';
-import DragIcon from '@mui/icons-material/DragIndicator';
+import PersistentDrawerLeft from "./NavbarDrawer";
+import SwipeableEdgeDrawer from "./InfoDrawer";
 
 const options = {
   layout: {
@@ -86,7 +83,7 @@ const options = {
   },
 };
 
-export default function Map() {
+export default function ProfileMap() {
   const params = useParams();
   const username = params.username;
 
@@ -105,9 +102,9 @@ export default function Map() {
   }, [searchId]);
 
   const nodes = new DataSet([
-    // { id: 1, label: "Node 1" },
-    // { id: 2, label: "Node 2" },
-    // { id: 3, label: "Node 3" },
+    { id: 1, label: "Node 1" },
+    { id: 2, label: "Node 2" },
+    { id: 3, label: "Node 3" },
   ]);
 
   const edges = new DataSet([
@@ -120,11 +117,7 @@ export default function Map() {
   useEffect(() => {
     function fetchData() {
       try {
-        // Verileri bir API'den almak için await kullanın
-        // const authData = await pb.admins.authWithPassword('umut@gmail.com', 'Umut.talha12');
-        // const records = await pb.collection('nodes').getFullList({
-        //     sort: '-created',
-        // });
+        console.log("sea");
       } catch (error) {
         console.error("Veri alınırken bir hata oluştu:", error);
       }
@@ -141,7 +134,7 @@ export default function Map() {
       updatedNode.color = "#8DDFCB";
       network.body.data.nodes.update(updatedNode);
     }
-    getNeighbour(openNode)
+    getNeighbour(openNode);
   };
 
   const notrNode = () => {
@@ -151,7 +144,7 @@ export default function Map() {
       updatedNode.color = "#D2DE32";
       network.body.data.nodes.update(updatedNode);
     }
-    getNeighbour(openNode)
+    getNeighbour(openNode);
   };
 
   const dislikeNode = () => {
@@ -164,7 +157,6 @@ export default function Map() {
   };
 
   const getNeighbour = async (nodeId) => {
-
     network.body.data.nodes.map((node) => {
       if (node.id === nodeId) {
         return { ...node, color: "blue" };
@@ -173,7 +165,6 @@ export default function Map() {
     });
 
     const record = await pb.collection("nodes").getOne(nodeId);
-
 
     for (let i = 0; i < record.neighbour_nodes.length; i++) {
       const komsu_node = await pb
@@ -204,7 +195,6 @@ export default function Map() {
         if (params.nodes.length > 0) {
           setOpenNode(params.nodes[0]);
           setOpen(true);
-          
         }
       });
     }
@@ -232,22 +222,8 @@ export default function Map() {
     });
   };
 
-  function zoomIn() {
-    const currentScale = network.getScale();
-    const newScale = currentScale * 1.2; // Yakınlaştırmak için bir faktör kullanabilirsiniz
-    network.moveTo({ scale: newScale });
-  }
-
-  function zoomOut() {
-    const currentScale = network.getScale();
-    const newScale = currentScale / 1.2; // Uzaklaştırmak için bir faktör kullanabilirsiniz
-    network.moveTo({ scale: newScale });
-  }
-
   return (
     <>
-      <PersistentDrawerLeft setSearchId={setSearchId} />
-
       <Button
         variant="contained"
         onClick={addNode}
@@ -262,6 +238,14 @@ export default function Map() {
       >
         Search Topic
       </Button>
+      <div
+        ref={containerRef}
+        style={{
+          width: "100%",
+          height: "calc(70vh - 110px)",
+          border: "1px solid #000",
+        }}
+      />
       <SwipeableEdgeDrawer
         open={open}
         setOpen={setOpen}
@@ -269,19 +253,6 @@ export default function Map() {
         notrNode={notrNode}
         dislikeNode={dislikeNode}
       />
-      <div
-        ref={containerRef}
-        style={{ width: "100%", height: "calc(100vh - 110px)" }}
-      />
-
-      <div style={{ position: 'absolute', top: '80px', right: '10px', zIndex: 100 }}>
-        <Button variant="contained" size="small" onClick={zoomIn} color="info">
-          <ZoomInIcon />
-        </Button>
-        <Button variant="contained" size="small" onClick={zoomOut} color="info">
-          <ZoomOutIcon />
-        </Button>
-      </div>
     </>
   );
 }

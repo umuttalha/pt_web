@@ -53,7 +53,6 @@ export default function SwipeableEdgeDrawer({
   notrNode,
   dislikeNode,
 }) {
-
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
@@ -63,7 +62,7 @@ export default function SwipeableEdgeDrawer({
       <Global
         styles={{
           ".MuiDrawer-root > .MuiPaper-root": {
-            height: `calc(70% - ${drawerBleeding}px)`,
+            height: `calc(80% - ${drawerBleeding}px)`,
             overflow: "visible",
           },
         }}
@@ -79,23 +78,7 @@ export default function SwipeableEdgeDrawer({
           keepMounted: true,
         }}
       >
-        <StyledBox
-          sx={{
-            position: 'relative',
-            marginTop: `${-drawerBleeding}px`,
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: 8,
-            visibility: 'visible',
-            right: 0,
-            left: 0,
-          }}
-        >
-          <Puller />
-          <Typography sx={{ p: 2, color: "text.secondary" }}>
-            {open ? "2 info" : ""}
-          </Typography>
-        </StyledBox>
-        <div style={{ overflowY: "scroll", height: "100%" }}>
+        <div style={{ overflowY: "scroll", height: "100%", marginTop: "18px" }}>
           <StyledBox
             sx={{
               px: 2,

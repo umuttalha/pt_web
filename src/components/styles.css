@@ -62,7 +62,7 @@ body {
     font-style: normal;
   }
   
-  ::-webkit-scrollbar {
+  /* ::-webkit-scrollbar {
     height: 5px;
     width: 5px;
     background: var(--background);
@@ -75,7 +75,7 @@ body {
   
   ::-webkit-scrollbar-corner {
     background: var(--background);
-  }
+  } */
   
   html {
     scroll-snap-type: y mandatory;

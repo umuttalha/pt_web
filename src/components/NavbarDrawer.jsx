@@ -149,7 +149,7 @@ export default function PersistentDrawerLeft({ setSearchId }) {
             <Link to="/" style={{ textDecoration: "none", color: "white" }}>
               <img
                 src="icon.png"
-                alt="Your Image"
+                alt=""
                 style={{ width: "30px", marginTop: "5px" }}
               />
               <span

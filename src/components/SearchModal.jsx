@@ -1,34 +1,67 @@
 import React, { useState, useEffect } from "react";
 import Modal from "@mui/material/Modal";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button"; // Ekledik
+import Box from "@mui/material/Box";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Tab,
+  Tabs,
+  TextField,
+  Alert,
+} from "@mui/material";
 
 import pb from "../lib/pocketbase";
 
-const SearchModal = ({ isOpen, onClose,setSearchId }) => {
+const SearchModal = ({ isOpen, onClose, setSearchId }) => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResultsTopics, setSearchResultsTopics] = useState([]);
+  const [searchResultsUsers, setSearchResultsUsers] = useState([]);
   const [displayedQuery, setDisplayedQuery] = useState("");
+
+  const [value, setValue] = useState(0);
+
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const navigate = useNavigate();
+
+  const handleTabChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   useEffect(() => {
     let timer;
 
     if (searchQuery) {
       timer = setTimeout(async () => {
-        const filterExpression = `(title~'${searchQuery}' || content~'${searchQuery}')`;
+        // const filterExpression = `(title~'${searchQuery}' || content~'${searchQuery}')`;
 
-        const records = await pb.collection("nodes").getList(1, 3, {
-          filter: filterExpression,
+        const filterExpressionTopics = `title~'${searchQuery}'`;
+
+        const recordsTopics = await pb.collection("nodes").getList(1, 9, {
+          filter: filterExpressionTopics,
         });
 
-        setSearchResults(records.items);
+        const filterExpressionUsers = `username~'${searchQuery}'`;
+
+        const recordsUsers = await pb.collection("users").getList(1, 9, {
+          filter: filterExpressionUsers,
+        });
+
+        setSearchResultsTopics(recordsTopics.items);
+        setSearchResultsUsers(recordsUsers.items);
 
         setDisplayedQuery(searchQuery);
-      }, 800);
+      }, 400);
     } else {
       setDisplayedQuery("");
-      setSearchResults([]);
+      setSearchResultsTopics([]);
+      setSearchResultsUsers([]);
     }
 
     return () => {
@@ -36,8 +69,13 @@ const SearchModal = ({ isOpen, onClose,setSearchId }) => {
     };
   }, [searchQuery]);
 
-  const handleRecordClick = (record) => {
-    setSearchId(record)
+  const handleRecordClickTopic = (record) => {
+
+    if (currentPath != "/map") {
+      navigate("/map");
+    } else {
+      setSearchId(record);
+    }
   };
 
   return (
@@ -60,31 +98,59 @@ const SearchModal = ({ isOpen, onClose,setSearchId }) => {
           boxShadow: 24,
           p: 4,
           textAlign: "center",
+          overflowY: "scroll", // Y ekseni boyunca kaydırma eklendi
+          maxHeight: "80vh",  // 
         }}
       >
+        {currentPath != "/map" && (
+          <Alert severity="info">If you wanna search topic go /map page</Alert>
+        )}
         <Typography id="modal-modal-title" variant="h6" component="h2">
           Search
         </Typography>
 
         <TextField
           id="outlined-basic"
-          label="Outlined"
+          // label="Search"
           variant="outlined"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
 
-        {searchResults.map((record) => (
-          <div key={record.id}>
-            <Typography variant="body2">{record.title}</Typography>
-            <Button
-              variant="outlined"
-              onClick={() => handleRecordClick(record)}
-            >
-              Detayları Görüntüle
-            </Button>
-          </div>
-        ))}
+        <Tabs value={value} onChange={handleTabChange}>
+          <Tab label="Topics" />
+          <Tab label="Users" />
+        </Tabs>
+
+        {value === 0 &&
+          searchResultsTopics.map((record) => (
+            <div key={record.id}>
+              <Typography variant="body2">{record.title}</Typography>
+              <Button
+                variant="outlined"
+                onClick={() => handleRecordClickTopic(record)}
+              >
+                Detayları Görüntüle
+              </Button>
+            </div>
+          ))}
+        {value === 1 &&
+          searchResultsUsers.map((record) => (
+            <div key={record.id}>
+              <Typography variant="body2">{record.username}</Typography>
+
+              <Link
+                to={`/${record.username}`}
+                style={{ textDecoration: "none", color: "white" }}
+              >
+                <Button
+                  variant="outlined"
+                >
+                  Detayları Görüntüle
+                </Button>
+              </Link>
+            </div>
+          ))}
       </div>
     </Modal>
   );

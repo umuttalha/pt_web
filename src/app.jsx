@@ -7,6 +7,7 @@ import Profile from "./routes/profile";
 import Settings from "./routes/settings";
 import AddNode from "./routes/addnode";
 import { useMyContext } from "./UserContext";
+import Home from "./routes/home";
 
 function App() {
   const { user } = useMyContext();
@@ -14,7 +15,14 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Root />} />
+
+      {user ? (
+          <Route path="/" element={<Home />} />
+        ) : (
+          <Route path="/" element={<Root />} />
+        )}
+        {/* <Route path="/" element={<Root />} />
+        <Route path="home" element={<Home />} /> */}
         <Route path="map" element={user ? <Map /> : <Navigate to="/" />} />
         <Route path="profile" element={user ? <Profile /> : <Navigate to="/" />} />
         <Route path="settings" element={user ? <Settings /> : <Navigate to="/" />} />

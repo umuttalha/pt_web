@@ -136,7 +136,7 @@ const InfoCard = () => {
           <span style={{ fontSize: 14 }}>12</span>
           <ArrowCircleDownIcon sx={{ cursor: "pointer" }} />
         </Box>
-        <MoreHorizIcon
+        {/* <MoreHorizIcon
           fontSize="small"
           sx={{ marginTop: "20px", cursor: "pointer" }}
           onClick={handleClick}
@@ -154,7 +154,7 @@ const InfoCard = () => {
             <PestControlIcon />
             Inappropriate
           </MenuItem>
-        </Menu>
+        </Menu> */}
       </CardActions>
     </Card>
   );

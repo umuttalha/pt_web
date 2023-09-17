@@ -10,7 +10,6 @@ import Chip from "@mui/material/Chip";
 import Grid from "@mui/material/Grid";
 import InfoCard from "./InfoCard";
 
-const drawerBleeding = 56;
 
 const Root = styled("div")(({ theme }) => ({
   height: "50%",
@@ -36,15 +35,6 @@ const shortenedURL = shortenText(
   maxLength
 );
 
-const Puller = styled(Box)(({ theme }) => ({
-  width: 30,
-  height: 6,
-  backgroundColor: theme.palette.mode === "light" ? grey[300] : grey[900],
-  borderRadius: 3,
-  position: "absolute",
-  top: 8,
-  left: "calc(50% - 15px)",
-}));
 
 export default function SwipeableEdgeDrawer({
   open,
@@ -57,12 +47,14 @@ export default function SwipeableEdgeDrawer({
     setOpen(newOpen);
   };
 
+  //global açılan drawer yüksekliğini belirliyor
+
   return (
     <Root>
       <Global
         styles={{
           ".MuiDrawer-root > .MuiPaper-root": {
-            height: `calc(80% - ${drawerBleeding}px)`,
+            height: "80%",
             overflow: "visible",
           },
         }}
@@ -72,7 +64,6 @@ export default function SwipeableEdgeDrawer({
         open={open}
         onClose={toggleDrawer(false)}
         onOpen={toggleDrawer(true)}
-        swipeAreaWidth={drawerBleeding}
         disableSwipeToOpen={false}
         ModalProps={{
           keepMounted: true,

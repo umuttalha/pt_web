@@ -38,8 +38,6 @@ export default function Profile() {
 
   let { username } = useParams();
 
-  console.log(username)
-
   // if username not exist return 404 page yoksa normak alttaki conponenti return de
 
   return (

@@ -12,14 +12,15 @@ import {
   Container,
   Switch,
   Divider,
+  Alert,
 } from "@mui/material";
 
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 
 export default function Settings() {
   const { user, setUser } = useMyContext();
@@ -54,41 +55,44 @@ export default function Settings() {
         />
       </Container> */}
 
-<Container maxWidth="sm">
-      <TableContainer>
-        <Table>
-          {/* <TableHead>
+      <Container maxWidth="sm">
+        <TableContainer>
+          <Table>
+            {/* <TableHead>
             <TableRow>
               <TableCell>Ayar</TableCell>
               <TableCell>Değer</TableCell>
             </TableRow>
           </TableHead> */}
-          <TableBody>
-            
-            <TableRow>
-              <TableCell>Private profile</TableCell>
+            <TableBody>
+              <TableRow>
+                {/* <TableCell>Private profile</TableCell>
               <TableCell>
                 <Switch
                   checked={checked}
                   onChange={handleChange}
                   inputProps={{ "aria-label": "controlled" }}
                 />
-              </TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Logout</TableCell>
-              <TableCell>
-                <Link to="/">
-                  <Button color="error" variant="contained" onClick={handleLogout}>
-                    Logout
-                  </Button>
-                </Link>
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Container>
+              </TableCell> */}
+              </TableRow>
+              <TableRow>
+                <TableCell>Logout</TableCell>
+                <TableCell>
+                  <Link to="/">
+                    <Button
+                      color="error"
+                      variant="contained"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </Button>
+                  </Link>
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Container>
     </>
   );
 }

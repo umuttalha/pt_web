@@ -5,9 +5,9 @@ import Button from "@mui/material/Button";
 import pb from "../lib/pocketbase";
 import PersistentDrawerLeft from "../components/NavbarDrawer";
 import SwipeableEdgeDrawer from "../components/InfoDrawer";
-import ZoomInIcon from '@mui/icons-material/ZoomIn';
-import ZoomOutIcon from '@mui/icons-material/ZoomOut';
-import DragIcon from '@mui/icons-material/DragIndicator';
+import ZoomInIcon from "@mui/icons-material/ZoomIn";
+import ZoomOutIcon from "@mui/icons-material/ZoomOut";
+import DragIcon from "@mui/icons-material/DragIndicator";
 
 const options = {
   layout: {
@@ -101,6 +101,10 @@ export default function Map() {
   useEffect(() => {
     if (searchId != "") {
       network.body.data.nodes.add({ id: searchId.id, label: searchId.title });
+      network.focus(searchId.id, {
+        scale: 1, // Optional: You can specify the zoom level
+        locked: true,
+      });
     }
   }, [searchId]);
 
@@ -141,7 +145,7 @@ export default function Map() {
       updatedNode.color = "#8DDFCB";
       network.body.data.nodes.update(updatedNode);
     }
-    getNeighbour(openNode)
+    getNeighbour(openNode);
   };
 
   const notrNode = () => {
@@ -151,7 +155,7 @@ export default function Map() {
       updatedNode.color = "#D2DE32";
       network.body.data.nodes.update(updatedNode);
     }
-    getNeighbour(openNode)
+    getNeighbour(openNode);
   };
 
   const dislikeNode = () => {
@@ -164,7 +168,6 @@ export default function Map() {
   };
 
   const getNeighbour = async (nodeId) => {
-
     network.body.data.nodes.map((node) => {
       if (node.id === nodeId) {
         return { ...node, color: "blue" };
@@ -173,7 +176,6 @@ export default function Map() {
     });
 
     const record = await pb.collection("nodes").getOne(nodeId);
-
 
     for (let i = 0; i < record.neighbour_nodes.length; i++) {
       const komsu_node = await pb
@@ -204,7 +206,6 @@ export default function Map() {
         if (params.nodes.length > 0) {
           setOpenNode(params.nodes[0]);
           setOpen(true);
-          
         }
       });
     }
@@ -234,13 +235,13 @@ export default function Map() {
 
   function zoomIn() {
     const currentScale = network.getScale();
-    const newScale = currentScale * 1.2; // Yakınlaştırmak için bir faktör kullanabilirsiniz
+    const newScale = currentScale * 1.2;
     network.moveTo({ scale: newScale });
   }
 
   function zoomOut() {
     const currentScale = network.getScale();
-    const newScale = currentScale / 1.2; // Uzaklaştırmak için bir faktör kullanabilirsiniz
+    const newScale = currentScale / 1.2;
     network.moveTo({ scale: newScale });
   }
 
@@ -274,7 +275,14 @@ export default function Map() {
         style={{ width: "100%", height: "calc(100vh - 110px)" }}
       />
 
-      <div style={{ position: 'absolute', top: '80px', right: '10px', zIndex: 100 }}>
+      <div
+        style={{
+          position: "absolute",
+          top: "80px",
+          right: "10px",
+          zIndex: 100,
+        }}
+      >
         <Button variant="contained" size="small" onClick={zoomIn} color="info">
           <ZoomInIcon />
         </Button>

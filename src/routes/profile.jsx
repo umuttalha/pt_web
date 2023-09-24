@@ -2,7 +2,7 @@ import PersistentDrawerLeft from "../components/NavbarDrawer";
 
 import pb from "../lib/pocketbase";
 import { useMyContext } from "../UserContext";
-import { Link,useParams } from "react-router-dom";
+import { Link , useParams,useLocation } from "react-router-dom";
 import InfoCard from "../components/InfoCard";
 
 import {
@@ -36,7 +36,13 @@ function CenteredBox({ children }) {
 export default function Profile() {
   const { user } = useMyContext();
 
-  let { username } = useParams();
+  const location = useLocation();
+  const currentPath = location.pathname;
+
+  const profileName = currentPath.slice(1);
+  console.log(profileName); // Output: 
+
+  //profile name ile user aynı ise başka component dönsün card componentleri silinebilir olsun falan. info card ın içinde de yapılabilir bu.
 
   // if username not exist return 404 page yoksa normak alttaki conponenti return de
 
@@ -47,7 +53,7 @@ export default function Profile() {
         <Grid container spacing={2}>
           <Grid item xs={12} md={12} style={{ marginBottom: "12px" }}>
             <div style={{ textAlign: "center" }}>
-              <Typography variant="h4">{user.username}</Typography>
+              <Typography variant="h4">{profileName}</Typography>
               <Typography variant="body1">Added Info: 4</Typography>
               <Typography variant="body1">interested topic: 36</Typography>
               <Button variant="contained" color="primary">

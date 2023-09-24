@@ -13,6 +13,7 @@ const options = {
   layout: {
     randomSeed: 2,
     improvedLayout: false,
+    // hierarchical:true,
   },
   nodes: {
     fixed: {
@@ -121,22 +122,22 @@ export default function Map() {
 
   const data = { nodes, edges };
 
-  useEffect(() => {
-    function fetchData() {
-      try {
-        // Verileri bir API'den almak için await kullanın
-        // const authData = await pb.admins.authWithPassword('umut@gmail.com', 'Umut.talha12');
-        // const records = await pb.collection('nodes').getFullList({
-        //     sort: '-created',
-        // });
-      } catch (error) {
-        console.error("Veri alınırken bir hata oluştu:", error);
-      }
-    }
+  // useEffect(() => {
+  //   function fetchData() {
+  //     try {
+  //       // Verileri bir API'den almak için await kullanın
+  //       // const authData = await pb.admins.authWithPassword('umut@gmail.com', 'Umut.talha12');
+  //       // const records = await pb.collection('nodes').getFullList({
+  //       //     sort: '-created',
+  //       // });
+  //     } catch (error) {
+  //       console.error("Veri alınırken bir hata oluştu:", error);
+  //     }
+  //   }
 
-    // async fonksiyonu çağırın
-    fetchData();
-  }, []); // B
+  //   // async fonksiyonu çağırın
+  //   fetchData();
+  // }, []);
 
   const likeNode = () => {
     const updatedNode = network.body.data.nodes.get(openNode);
@@ -175,9 +176,16 @@ export default function Map() {
       return node;
     });
 
+
+    console.log(nodeId)
     const record = await pb.collection("nodes").getOne(nodeId);
 
+    console.log(record)
+
     for (let i = 0; i < record.neighbour_nodes.length; i++) {
+
+      console.log(record.neighbour_nodes[i])
+
       const komsu_node = await pb
         .collection("nodes")
         .getOne(record.neighbour_nodes[i]);
@@ -193,6 +201,7 @@ export default function Map() {
         network.body.data.edges.add({
           from: komsu_node.id,
           to: record.id,
+          arrows: 'from'
         });
       } catch {}
     }
@@ -265,6 +274,7 @@ export default function Map() {
       </Button>
       <SwipeableEdgeDrawer
         open={open}
+        openNode={openNode}
         setOpen={setOpen}
         likeNode={likeNode}
         notrNode={notrNode}

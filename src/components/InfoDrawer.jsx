@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState,useEffect } from "react";
 import { Global } from "@emotion/react";
 import { styled } from "@mui/material/styles";
 import { grey } from "@mui/material/colors";
@@ -9,7 +9,17 @@ import SwipeableDrawer from "@mui/material/SwipeableDrawer";
 import Chip from "@mui/material/Chip";
 import Grid from "@mui/material/Grid";
 import InfoCard from "./InfoCard";
+import AddIcon from "@mui/icons-material/Add";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import TextField from "@mui/material/TextField";
+import MenuItem from "@mui/material/MenuItem";
+import Select from "@mui/material/Select";
+import Alert from "@mui/material/Alert";
 
+import pb from "../lib/pocketbase";
 
 const Root = styled("div")(({ theme }) => ({
   height: "50%",
@@ -35,19 +45,110 @@ const shortenedURL = shortenText(
   maxLength
 );
 
-
 export default function SwipeableEdgeDrawer({
   open,
   setOpen,
   likeNode,
   notrNode,
   dislikeNode,
+  openNode,
 }) {
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
 
-  //global açılan drawer yüksekliğini belirliyor
+  const [addInfoModalOpen, setAddInfoModalOpen] = useState(false);
+
+  const [addTitle, setAddTitle] = useState("");
+  const [addContent, setAddContent] = useState("");
+  const [addSource, setAddSource] = useState("");
+  const [addSelectedOption, setAddSelectedOption] = useState("");
+  const [addAlertVisible, setAddAlertVisible] = useState(false);
+
+  const [addTags, setAddTags] = useState([]);
+  const [addTagInput, setAddTagInput] = useState("");
+
+  const handleTagInputChange = (e) => {
+    setAddTagInput(e.target.value);
+  };
+
+  const handleTagAdd = () => {
+    if (tagInput.trim() !== "") {
+      setTags([...addTags, tagInput.trim()]);
+      setAddTagInput("");
+    }
+  };
+
+  const handleTagDelete = (tagToDelete) => {
+    const updatedTags = addTags.filter((tag) => tag !== tagToDelete);
+    setAddTags(updatedTags);
+  };
+
+  const options = ["Article", "Book", "Video", "Podcast", "Course"];
+
+  const handleSave = () => {
+    // Verileri kaydetme işlemlerini burada yapabilirsiniz.
+    // Örneğin, bu verileri bir API'ye gönderebilirsiniz.
+    // Verileri sıfırla ve modalı kapat
+
+    if (!addTitle || !addSelectedOption) {
+      setAddAlertVisible(true);
+      return;
+    }
+
+    setAddSelectedOption("");
+    setAddTitle("");
+    setAddContent("");
+    setAddSource("");
+    setAddTags([]);
+    setAddTagInput("");
+    setAddAlertVisible(false);
+    setAddInfoModalOpen(false);
+  };
+
+  const handleClickOpen = () => {
+    setAddInfoModalOpen(true);
+  };
+
+  const handleClose = () => {
+    setAddSelectedOption("");
+    setAddTitle("");
+    setAddContent("");
+    setAddSource("");
+    setAddTagInput("");
+    setAddTags([]);
+    setAddInfoModalOpen(false);
+  };
+
+
+  const [nodeTitle, setNodeTitle] = useState("")
+  const [nodeContent, setNodeContent] = useState("")
+  const [nodeTags, setNodeTags] = useState(null)
+  const [nodeInfos, setNodeInfos] = useState([])
+
+
+  useEffect(() => {
+
+
+
+    async function fetchData() {
+
+
+      const record = await pb.collection("nodes").getOne(openNode);
+
+
+      setNodeTitle(record.title)
+      setNodeContent(record.content)
+      setNodeTags(record.application_areas)
+      setNodeInfos(record.infos)
+      
+    }
+
+    fetchData();
+    
+  }, [openNode])
+  
+
 
   return (
     <Root>
@@ -83,7 +184,7 @@ export default function SwipeableEdgeDrawer({
               component="h4"
               sx={{ marginBottom: "4px", marginTop: "6px" }}
             >
-              Computer engineering
+              {nodeTitle}
             </Typography>
             <Box
               sx={{
@@ -121,39 +222,129 @@ export default function SwipeableEdgeDrawer({
             </Box>
 
             <Grid container spacing={1}>
-              <Grid item>
-                <Chip label="Mail Filtering" size="small" />
-              </Grid>
-              <Grid item>
-                <Chip label="Computer Hardware Development" size="small" />
-              </Grid>
-              <Grid item>
-                <Chip label="Embedded Systems Development" size="small" />
-              </Grid>
+              {null!=nodeTags && nodeTags.map((tag, index) => (
+                <Grid item key={index}>
+                  <Chip label={tag} size="small" />
+                </Grid>
+              ))}
             </Grid>
 
             <Typography component="div" sx={{ marginTop: "20px" }}>
-              Computer engineering (CoE or CpE) is a branch of electronic
-              engineering and computer science that integrates several fields of
-              computer science and electronic engineering required to develop
-              computer hardware and software. Computer engineers require
-              training in electronic engineering, computer science,
-              hardware-software integration, software design, and software
-              engineering. It uses the techniques and principles of electrical
-              engineering and computer science, and can encompass areas such as
-              artificial intelligence (AI), robotics, computer networks,
-              computer architecture, and operating systems. Computer engineers
-              are involved in many hardware and software aspects of computing,
-              from the design of individual microcontrollers, microprocessors,
-              personal computers, and supercomputers, to circuit design. This
-              field of engineering not only focuses on how computer systems
-              themselves work but also on how to integrate them into the larger
-              picture. Robotics is one of the applications of computer
-              engineering.
+              {nodeContent}
             </Typography>
 
-            <InfoCard />
-            <InfoCard />
+            {nodeInfos.map((info)=>(
+              <InfoCard infoId={info}/>
+
+            ))}
+
+            {/* <InfoCard infoId={"syrz3af50ftd2bk"}/>
+            <InfoCard infoId={"w3s9d09x1qe53rs"}/> */}
+
+
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              style={{
+                marginTop: "18px",
+                textAlign: "center",
+              }}
+            >
+              <Button
+                variant="contained"
+                sx={{ marginBottom: "48px" }}
+                onClick={handleClickOpen}
+              >
+                <AddIcon /> Info Add
+              </Button>
+            </Box>
+            <Dialog open={addInfoModalOpen} onClose={handleClose}>
+              <DialogTitle>Add Info</DialogTitle>
+              <DialogContent>
+                {addAlertVisible && (
+                  <Alert severity="error">
+                    Do not leave title and content type empty
+                  </Alert>
+                )}
+
+                <Select
+                  variant="outlined"
+                  fullWidth
+                  label="Select"
+                  value={addSelectedOption}
+                  onChange={(e) => setAddSelectedOption(e.target.value)}
+                  sx={{ margin: "5px" }}
+                >
+                  {options.map((option, index) => (
+                    <MenuItem key={index} value={option}>
+                      {option}
+                    </MenuItem>
+                  ))}
+                </Select>
+
+                <TextField
+                  label="Title"
+                  variant="outlined"
+                  fullWidth
+                  value={addTitle}
+                  onChange={(e) => setAddTitle(e.target.value)}
+                  sx={{ margin: "5px" }}
+                />
+                <TextField
+                  label="Content"
+                  variant="outlined"
+                  fullWidth
+                  multiline
+                  rows={4}
+                  value={addContent}
+                  onChange={(e) => setAddContent(e.target.value)}
+                  sx={{ margin: "5px" }}
+                />
+                <TextField
+                  label="Link"
+                  variant="outlined"
+                  fullWidth
+                  value={addSource}
+                  onChange={(e) => setAddSource(e.target.value)}
+                  sx={{ margin: "5px" }}
+                />
+
+                <TextField
+                  label="Tag Ekle"
+                  variant="outlined"
+                  fullWidth
+                  value={addTagInput}
+                  sx={{ margin: "5px" }}
+                  onChange={handleTagInputChange}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      handleTagAdd();
+                    }
+                  }}
+                />
+                <div>
+                  {addTags.map((tag, index) => (
+                    <Chip
+                      key={index}
+                      label={tag}
+                      onDelete={() => handleTagDelete(tag)}
+                      style={{ margin: "4px" }}
+                    />
+                  ))}
+                </div>
+
+               
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} color="primary">
+                  İptal
+                </Button>
+                <Button onClick={handleSave} color="primary">
+                  Kaydet
+                </Button>
+              </DialogActions>
+            </Dialog>
           </StyledBox>
         </div>
       </SwipeableDrawer>

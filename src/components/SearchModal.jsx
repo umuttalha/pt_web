@@ -28,6 +28,7 @@ const SearchModal = ({ isOpen, onClose, setSearchId }) => {
 
   const location = useLocation();
   const currentPath = location.pathname;
+  
   const navigate = useNavigate();
 
   const handleTabChange = (event, newValue) => {
@@ -94,7 +95,6 @@ const SearchModal = ({ isOpen, onClose, setSearchId }) => {
           width: 300,
           height: 300,
           backgroundColor: "white",
-          border: "2px solid #000",
           boxShadow: 24,
           p: 4,
           textAlign: "center",
@@ -141,7 +141,7 @@ const SearchModal = ({ isOpen, onClose, setSearchId }) => {
 
               <Link
                 to={`/${record.username}`}
-                style={{ textDecoration: "none", color: "white" }}
+                style={{ textDecoration: "none" }}
               >
                 <Button
                   variant="outlined"

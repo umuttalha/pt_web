@@ -22,13 +22,16 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Button } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import LoginIcon from "@mui/icons-material/Login";
-import FlagIcon from '@mui/icons-material/Flag';
+import FlagIcon from "@mui/icons-material/Flag";
 
 import { useMyContext } from "../UserContext";
 
 import { Link } from "react-router-dom";
 import SignInModal from "./StartModal";
 import SearchModal from "./SearchModal";
+
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 
 import pb from "../lib/pocketbase";
 
@@ -38,10 +41,10 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
   ({ theme, open }) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
-    transition: theme.transitions.create("margin", {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
+    // transition: theme.transitions.create("margin", {
+    //   easing: theme.transitions.easing.sharp,
+    //   duration: theme.transitions.duration.leavingScreen,
+    // }),
     marginLeft: `-${drawerWidth}px`,
     ...(open && {
       transition: theme.transitions.create("margin", {
@@ -83,12 +86,10 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 export default function PersistentDrawerLeft({ setSearchId }) {
-  const theme = useTheme();
+  // const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
   const { user, setUser } = useMyContext();
-
-  // const [user, setUser] = useState(pb.authStore.model);
 
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
@@ -164,6 +165,7 @@ export default function PersistentDrawerLeft({ setSearchId }) {
               </span>
             </Link>
           </Typography>
+
           {user ? (
             <Button
               sx={{ position: "absolute", right: "12px", color: "white" }}
@@ -177,7 +179,7 @@ export default function PersistentDrawerLeft({ setSearchId }) {
               sx={{ marginLeft: "auto", marginRight: "0" }}
               onClick={handleOpenModal}
             >
-              <LoginIcon sx={{marginRight:1}}/> Start
+              <LoginIcon sx={{ marginRight: 1 }} /> Start
             </Button>
             // <ListItem key={"Start"} disablePadding>
             //   <ListItemButton
@@ -223,11 +225,7 @@ export default function PersistentDrawerLeft({ setSearchId }) {
       >
         <DrawerHeader>
           <IconButton onClick={handleDrawerClose}>
-            {theme.direction === "ltr" ? (
-              <ChevronLeftIcon />
-            ) : (
-              <ChevronRightIcon />
-            )}
+            <ChevronLeftIcon />
           </IconButton>
         </DrawerHeader>
         <Divider />
@@ -235,7 +233,7 @@ export default function PersistentDrawerLeft({ setSearchId }) {
         {user ? (
           <>
             <List>
-              <Link to="/" style={{ textDecoration: "none", color: "black" }}>
+              <Link to="/" style={{ textDecoration: "none" }}>
                 <ListItem key={"Home"} disablePadding>
                   <ListItemButton>
                     <ListItemIcon>
@@ -245,10 +243,7 @@ export default function PersistentDrawerLeft({ setSearchId }) {
                   </ListItemButton>
                 </ListItem>
               </Link>
-              <Link
-                to="/map"
-                style={{ textDecoration: "none", color: "black" }}
-              >
+              <Link to="/map" style={{ textDecoration: "none" }}>
                 <ListItem key={"Map"} disablePadding>
                   <ListItemButton>
                     <ListItemIcon>
@@ -258,10 +253,7 @@ export default function PersistentDrawerLeft({ setSearchId }) {
                   </ListItemButton>
                 </ListItem>
               </Link>
-              <Link
-                to="/profile"
-                style={{ textDecoration: "none", color: "black" }}
-              >
+              <Link to="/profile" style={{ textDecoration: "none" }}>
                 <ListItem key={"Profile"} disablePadding>
                   <ListItemButton>
                     <ListItemIcon>
@@ -274,10 +266,7 @@ export default function PersistentDrawerLeft({ setSearchId }) {
             </List>
             <Divider />
             <List>
-              <Link
-                to="/settings"
-                style={{ textDecoration: "none", color: "black" }}
-              >
+              <Link to="/settings" style={{ textDecoration: "none" }}>
                 <ListItem key={"Settings"} disablePadding>
                   <ListItemButton>
                     <ListItemIcon>
@@ -288,10 +277,7 @@ export default function PersistentDrawerLeft({ setSearchId }) {
                 </ListItem>
               </Link>
 
-              <Link
-                to="/addnode"
-                style={{ textDecoration: "none", color: "black" }}
-              >
+              <Link to="/addnode" style={{ textDecoration: "none" }}>
                 <ListItem key={"Add Node"} disablePadding>
                   <ListItemButton>
                     <ListItemIcon>

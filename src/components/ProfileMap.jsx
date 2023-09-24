@@ -252,6 +252,7 @@ export default function ProfileMap() {
         likeNode={likeNode}
         notrNode={notrNode}
         dislikeNode={dislikeNode}
+        openNode={openNode}
       />
     </>
   );

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import PersistentDrawerLeft from "../components/NavbarDrawer";
-import { Paper, Container, Typography, Box } from "@mui/material";
+import { Paper, Container, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import InfoCard from "../components/InfoCard";
-import { Collapse } from "@mui/material";
-import { Card, CardContent } from "@mui/material";
 
 import pb from "../lib/pocketbase";
 
@@ -20,15 +18,6 @@ const Item = styled(Paper)(({ theme }) => ({
 
 export default function Home() {
   const [infoList, setInfoList] = useState([]);
-  const [selectedInfo, setSelectedInfo] = useState(null);
-
-  const handleClick = (info) => {
-    if (selectedInfo === info) {
-      setSelectedInfo(null); // Seçili bilgi zaten açıksa, kapat
-    } else {
-      setSelectedInfo(info); // Seçili bilgiyi ayarla
-    }
-  };
 
   useEffect(() => {
     async function fetchData() {
@@ -36,8 +25,6 @@ export default function Home() {
         filter: 'user_id="7ptk0ly7mhowlw2" && interaction="like"',
         expand: "node_id.infos.author",
       });
-
-      console.log(resultList);
 
       const allInfos = [];
       resultList.forEach((node) => {
@@ -51,7 +38,10 @@ export default function Home() {
         }
       });
 
+      //toDo tarihe göre sort olsun bu çalışmıyor
+
       allInfos.sort((a, b) => new Date(b.updated) - new Date(a.updated));
+
       setInfoList(allInfos);
     }
 
@@ -67,45 +57,25 @@ export default function Home() {
           Info of the topics you like
         </Typography>
 
-        {/* {infoList.map((info) => (
-        <div key={info.id}>
-          <div
-            onClick={() => handleClick(info)}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: '100%',
-              height: '100px',
-              backgroundColor: 'blue',
-              marginTop: '2px',
-              borderRadius: '8px',
-              cursor: 'pointer',
-            }}
-          >
-            <p>{info.expand.node_id.title}</p>
-          </div>
-          <Collapse in={selectedInfo === info}>
-            <div
-              style={{
-                backgroundColor: 'white',
-                border: '1px solid #ccc',
-                padding: '8px',
-                marginTop: '2px',
-                borderRadius: '8px',
-              }}
-            >
-              <p>{info.expand.node_id.title}</p>
-            </div>
-          </Collapse>
-        </div>
-      ))} */}
-
         {infoList.map((info) => (
+          <div key={info.id}>
+            <InfoCard
+              info_content={info.content}
+              info_created={info.created}
+              info_author={info.expand.author.username}
+              info_source={info.source}
+              info_tags={info.tags}
+              info_title={info.title}
+              info_type={info.type}
+            />
+          </div>
+        ))}
+
+        {/* {infoList.map((info) => (
           <div onClick={() => handleClick(info)} key={info.id}>
             <InfoCard infoId={info.id} />
           </div>
-        ))}
+        ))} */}
       </Container>
     </>
   );

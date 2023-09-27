@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Global } from "@emotion/react";
 import { styled } from "@mui/material/styles";
 import { grey } from "@mui/material/colors";
@@ -120,35 +120,26 @@ export default function SwipeableEdgeDrawer({
     setAddInfoModalOpen(false);
   };
 
-
-  const [nodeTitle, setNodeTitle] = useState("")
-  const [nodeContent, setNodeContent] = useState("")
-  const [nodeTags, setNodeTags] = useState(null)
-  const [nodeInfos, setNodeInfos] = useState([])
-
+  const [nodeTitle, setNodeTitle] = useState("");
+  const [nodeContent, setNodeContent] = useState("");
+  const [nodeTags, setNodeTags] = useState(null);
+  const [infoList, setInfoList] = useState([]);
 
   useEffect(() => {
-
-
-
     async function fetchData() {
+      const record = await pb.collection("nodes").getOne(openNode, {
+        expand: "infos.author",
+      });
 
+      setNodeTitle(record.title);
+      setNodeContent(record.content);
+      setNodeTags(record.application_areas);
 
-      const record = await pb.collection("nodes").getOne(openNode);
-
-
-      setNodeTitle(record.title)
-      setNodeContent(record.content)
-      setNodeTags(record.application_areas)
-      setNodeInfos(record.infos)
-      
+      setInfoList(record.expand.infos);
     }
 
     fetchData();
-    
-  }, [openNode])
-  
-
+  }, [openNode]);
 
   return (
     <Root>
@@ -222,25 +213,31 @@ export default function SwipeableEdgeDrawer({
             </Box>
 
             <Grid container spacing={1}>
-              {null!=nodeTags && nodeTags.map((tag, index) => (
-                <Grid item key={index}>
-                  <Chip label={tag} size="small" />
-                </Grid>
-              ))}
+              {null != nodeTags &&
+                nodeTags.map((tag, index) => (
+                  <Grid item key={index}>
+                    <Chip label={tag} size="small" />
+                  </Grid>
+                ))}
             </Grid>
 
             <Typography component="div" sx={{ marginTop: "20px" }}>
               {nodeContent}
             </Typography>
 
-            {nodeInfos.map((info)=>(
-              <InfoCard infoId={info}/>
-
+            {infoList.map((info) => (
+              <div key={info.id}>
+                <InfoCard
+                  info_content={info.content}
+                  info_created={info.created}
+                  info_author={info.expand.author.username}
+                  info_source={info.source}
+                  info_tags={info.tags}
+                  info_title={info.title}
+                  info_type={info.type}
+                />
+              </div>
             ))}
-
-            {/* <InfoCard infoId={"syrz3af50ftd2bk"}/>
-            <InfoCard infoId={"w3s9d09x1qe53rs"}/> */}
-
 
             <Box
               display="flex"
@@ -333,8 +330,6 @@ export default function SwipeableEdgeDrawer({
                     />
                   ))}
                 </div>
-
-               
               </DialogContent>
               <DialogActions>
                 <Button onClick={handleClose} color="primary">

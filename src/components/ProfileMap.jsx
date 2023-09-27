@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router";
 import { DataSet, Network } from "vis";
 import Button from "@mui/material/Button";
 import pb from "../lib/pocketbase";
@@ -84,8 +83,6 @@ const options = {
 };
 
 export default function ProfileMap() {
-  const params = useParams();
-  const username = params.username;
 
   const containerRef = useRef(null);
 
@@ -102,9 +99,9 @@ export default function ProfileMap() {
   }, [searchId]);
 
   const nodes = new DataSet([
-    { id: 1, label: "Node 1" },
-    { id: 2, label: "Node 2" },
-    { id: 3, label: "Node 3" },
+    // { id: 1, label: "Node 1" },
+    // { id: 2, label: "Node 2" },
+    // { id: 3, label: "Node 3" },
   ]);
 
   const edges = new DataSet([
@@ -224,7 +221,7 @@ export default function ProfileMap() {
 
   return (
     <>
-      <Button
+      {/* <Button
         variant="contained"
         onClick={addNode}
         style={{
@@ -237,7 +234,7 @@ export default function ProfileMap() {
         }}
       >
         Search Topic
-      </Button>
+      </Button> */}
       <div
         ref={containerRef}
         style={{

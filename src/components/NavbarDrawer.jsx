@@ -30,8 +30,6 @@ import { Link } from "react-router-dom";
 import SignInModal from "./StartModal";
 import SearchModal from "./SearchModal";
 
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import LightModeIcon from "@mui/icons-material/LightMode";
 
 import pb from "../lib/pocketbase";
 
@@ -41,10 +39,6 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })(
   ({ theme, open }) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
-    // transition: theme.transitions.create("margin", {
-    //   easing: theme.transitions.easing.sharp,
-    //   duration: theme.transitions.duration.leavingScreen,
-    // }),
     marginLeft: `-${drawerWidth}px`,
     ...(open && {
       transition: theme.transitions.create("margin", {
@@ -91,6 +85,7 @@ export default function PersistentDrawerLeft({ setSearchId }) {
 
   const { user, setUser } = useMyContext();
 
+
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -103,10 +98,6 @@ export default function PersistentDrawerLeft({ setSearchId }) {
     setIsSearchModalOpen(false);
   };
 
-  const toggleDrawer = () => {
-    setIsDrawerOpen(!isDrawerOpen);
-  };
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -117,10 +108,6 @@ export default function PersistentDrawerLeft({ setSearchId }) {
 
   const handleOpenModal = () => {
     setModalOpen(true);
-  };
-
-  const handleLogout = () => {
-    setUser(pb.authStore.clear());
   };
 
   const handleCloseModal = () => {
@@ -253,7 +240,7 @@ export default function PersistentDrawerLeft({ setSearchId }) {
                   </ListItemButton>
                 </ListItem>
               </Link>
-              <Link to="/profile" style={{ textDecoration: "none" }}>
+              <Link to={`/${user.username}`} style={{ textDecoration: "none" }}>
                 <ListItem key={"Profile"} disablePadding>
                   <ListItemButton>
                     <ListItemIcon>

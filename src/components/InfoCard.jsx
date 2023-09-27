@@ -5,71 +5,63 @@ import Chip from "@mui/material/Chip";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardActions from "@mui/material/CardActions";
-import { Menu, MenuItem, Link, Grid, Collapse } from "@mui/material";
+import {
+  Menu,
+  MenuItem,
+  Link,
+  Grid,
+  Collapse,
+  TextField,
+  Button,
+} from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import ArrowCircleUpIcon from "@mui/icons-material/ArrowCircleUp";
 import ArrowCircleDownIcon from "@mui/icons-material/ArrowCircleDown";
 import BugReportIcon from "@mui/icons-material/BugReport";
 import PestControlIcon from "@mui/icons-material/PestControl";
 import { Link as RouterLink } from "react-router-dom";
-import CommentIcon from "@mui/icons-material/Comment";
 
 import pb from "../lib/pocketbase";
 
-const InfoCard = ({ infoId }) => {
-  function shortenText(text, maxLength) {
-    if (text.length > maxLength) {
-      return text.substring(0, maxLength) + "...";
+const options = {
+  year: "numeric",
+  month: "short",
+  day: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+};
+
+const InfoCard = ({
+  info_content,
+  info_created,
+  info_author,
+  info_source,
+  info_tags,
+  info_title,
+  info_type,
+}) => {
+
+  function shortenText(text) {
+    if (text.length > 30) {
+      return text.substring(0, 30) + "...";
     }
     return text;
   }
-  const maxLength = 30;
 
-  const [selectedInfo, setSelectedInfo] = useState(null);
+  const [date, setDate] = useState("");
 
-  const handleClick = (info) => {
-    if (selectedInfo === info) {
-      setSelectedInfo(null); // Seçili bilgi zaten açıksa, kapat
-    } else {
-      setSelectedInfo(info); // Seçili bilgiyi ayarla
-    }
-  };
+  useEffect(() => {
+    const date = new Date(info_created);
+
+    const formattedDate = date.toLocaleString("en-US", options);
+    setDate(formattedDate);
+  }, []);
 
   const [anchorEl, setAnchorEl] = useState(null);
-
-  const [author, setAuthor] = useState("");
-  const [content, setContent] = useState("");
-  const [title, setTitle] = useState("");
-  const [source, setSource] = useState("");
-  const [type, setType] = useState("");
-  const [tags, setTags] = useState([]);
-  const [likedBy, setLikedBy] = useState([]);
 
   const handleClickMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
-
-  useEffect(() => {
-    async function fetchData() {
-      const record = await pb
-        .collection("posts")
-        .getOne(infoId, { requestKey: infoId });
-
-      setContent(record.content);
-      setTitle(record.title);
-      setLikedBy(record.liked_by);
-      setSource(shortenText(record.source, maxLength));
-      setType(record.type);
-      setTags(record.tags);
-
-      const authorName = await pb
-        .collection("users")
-        .getOne(record.author, { requestKey: infoId });
-
-      setAuthor(authorName.username);
-    }
-    fetchData();
-  }, []);
 
   const handleClose = () => {
     setAnchorEl(false);
@@ -85,7 +77,7 @@ const InfoCard = ({ infoId }) => {
               alignItems="center"
               sx={{ marginLeft: "-4px", marginBottom: "4px" }}
             >
-              <Chip label={type} />
+              <Chip label={info_type} />
               <Typography
                 sx={{
                   fontSize: 20,
@@ -95,7 +87,7 @@ const InfoCard = ({ infoId }) => {
                 color="text.secondary"
                 gutterBottom
               >
-                {title}
+                {info_title}
               </Typography>
             </Box>
             <span
@@ -106,8 +98,11 @@ const InfoCard = ({ infoId }) => {
               }}
             >
               Posted by{" "}
-              <RouterLink to={`/${author}`} style={{ textDecoration: "none" }}>
-                <span style={{ fontWeight: "bold" }}> {author}</span>
+              <RouterLink
+                to={`/${info_author}`}
+                style={{ textDecoration: "none" }}
+              >
+                <span style={{ fontWeight: "bold" }}> {info_author}</span>
               </RouterLink>
             </span>
 
@@ -117,8 +112,8 @@ const InfoCard = ({ infoId }) => {
               sx={{ marginLeft: "-4px", marginBottom: "4px" }}
             >
               <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-                {null != tags &&
-                  tags.map((tag, index) => (
+                {null != info_tags &&
+                  info_tags.map((tag, index) => (
                     <Grid item key={index}>
                       <Chip
                         label={tag}
@@ -127,27 +122,11 @@ const InfoCard = ({ infoId }) => {
                       />
                     </Grid>
                   ))}
-
-                {/* <Chip
-              label="Chip falined"
-              variant="outlined"
-              style={{ height: "20px", marginRight: 3 }}
-            />
-            <Chip
-              label="Chip Outlined"
-              variant="outlined"
-              style={{ height: "20px", marginRight: 3 }}
-            />
-            <Chip
-              label="Chip Outl"
-              variant="outlined"
-              style={{ height: "20px", marginRight: 3 }}
-            /> */}
               </Box>
             </Box>
 
             <Typography variant="body2" sx={{ fontSize: "16px" }}>
-              {content}
+              {info_content}
             </Typography>
             <span
               style={{
@@ -168,10 +147,15 @@ const InfoCard = ({ infoId }) => {
               underline="none"
               sx={{ fontSize: "14px" }}
             >
-              {source}
+              {info_source}
             </Link>
-            {/* <CommentIcon onClick={() => handleClick(infoId)} sx={{marginLeft:"16px"}}/> */}
-            {/* <div onClick={() => handleClick(infoId)} style={{marginTop:"6px",fontSize:"12px"}}> Comments</div> */}
+
+            <Typography
+              variant="body1"
+              sx={{ fontSize: "12px", marginTop: "4px" }}
+            >
+              {date}
+            </Typography>
           </CardContent>
           <CardActions
             sx={{
@@ -183,7 +167,11 @@ const InfoCard = ({ infoId }) => {
           >
             <MoreHorizIcon
               fontSize="small"
-              sx={{position:"relative",cursor: "pointer", marginBottom:"12px" }}
+              sx={{
+                position: "relative",
+                cursor: "pointer",
+                marginBottom: "12px",
+              }}
               onClick={handleClickMenu}
             />
             <Menu
@@ -200,42 +188,8 @@ const InfoCard = ({ infoId }) => {
                 Inappropriate
               </MenuItem>
             </Menu>
-
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                "& > *": {
-                  marginBottom: "4px",
-                },
-              }}
-            >
-              <ArrowCircleUpIcon sx={{ cursor: "pointer" }} />
-              <span style={{ fontSize: 14 }}>12</span>
-              <ArrowCircleDownIcon sx={{ cursor: "pointer" }} />
-            </Box>
-
-            <CommentIcon
-              onClick={() => handleClick(infoId)}
-              sx={{ marginTop: "18px", cursor: "pointer",marginRight:"6px" }}
-            />
-
-            
           </CardActions>
         </Card>
-        <Collapse in={selectedInfo === infoId}>
-          <div
-            style={{
-              border: "1px solid #ccc",
-              padding: "8px",
-              marginTop: "2px",
-              borderRadius: "8px",
-            }}
-          >
-            <p>yorumlar</p>
-          </div>
-        </Collapse>
       </div>
     </>
   );

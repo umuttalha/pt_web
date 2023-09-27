@@ -1,8 +1,8 @@
+import React, { useState, useEffect } from "react";
 import PersistentDrawerLeft from "../components/NavbarDrawer";
-
 import pb from "../lib/pocketbase";
 import { useMyContext } from "../UserContext";
-import { Link , useParams,useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import InfoCard from "../components/InfoCard";
 
 import {
@@ -33,6 +33,7 @@ function CenteredBox({ children }) {
     </div>
   );
 }
+
 export default function Profile() {
   const { user } = useMyContext();
 
@@ -40,7 +41,29 @@ export default function Profile() {
   const currentPath = location.pathname;
 
   const profileName = currentPath.slice(1);
-  console.log(profileName); // Output: 
+
+  console.log(profileName)
+
+  const [infoList, setInfoList] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const resultList = await pb.collection("posts").getList(1, 3, {
+        filter: `author.username='${profileName}'`,
+        expand: "author",
+      });
+
+      // const mapList = await pb.collection("interaction_nodes").getFullList({
+      //   filter: `user_id.username="${profileName}"`,
+      //   expand: "node_id.infos.author",
+      // });
+
+      // console.log(mapList)
+      setInfoList(resultList.items);
+    }
+
+    fetchData();
+  }, []);
 
   //profile name ile user aynı ise başka component dönsün card componentleri silinebilir olsun falan. info card ın içinde de yapılabilir bu.
 
@@ -64,18 +87,25 @@ export default function Profile() {
 
           <ProfileMap />
 
-          <Grid item xs={12} md={4} sm={6} style={{marginBottom:"40px"}}>
-            <CenteredBox>Title</CenteredBox>
-            <InfoCard />
-          </Grid>
-          <Grid item xs={12} md={4} sm={6} style={{marginBottom:"40px"}}>
-            <CenteredBox>Title</CenteredBox>
-            <InfoCard />
-          </Grid>
-          <Grid item xs={12} md={4} sm={6} style={{marginBottom:"40px"}}>
-            <CenteredBox>Title</CenteredBox>
-            <InfoCard />
-          </Grid>
+          {infoList.map((info) => (
+            <Grid
+              item
+              xs={12}
+              md={4}
+              key={info.id}
+              style={{ marginBottom: "20px" }}
+            >
+              <InfoCard
+                info_content={info.content}
+                info_created={info.created}
+                info_author={info.expand.author.username}
+                info_source={info.source}
+                info_tags={info.tags}
+                info_title={info.title}
+                info_type={info.type}
+              />
+            </Grid>
+          ))}
         </Grid>
       </Container>
     </>

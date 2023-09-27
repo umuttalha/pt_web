@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useParams } from "react-router";
 import { DataSet, Network } from "vis";
 import Button from "@mui/material/Button";
 import pb from "../lib/pocketbase";
@@ -8,6 +7,8 @@ import SwipeableEdgeDrawer from "../components/InfoDrawer";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import DragIcon from "@mui/icons-material/DragIndicator";
+
+import { useMyContext } from "../UserContext";
 
 const options = {
   layout: {
@@ -87,9 +88,9 @@ const options = {
   },
 };
 
+
 export default function Map() {
-  const params = useParams();
-  const username = params.username;
+  const { user } = useMyContext();
 
   const containerRef = useRef(null);
 
@@ -98,6 +99,57 @@ export default function Map() {
   const [searchId, setSearchId] = useState("");
 
   const [openNode, setOpenNode] = useState(null);
+
+
+const nodes = new DataSet([
+  // { id: 1, label: "Node 1", color: "#8DDFCB" },
+  // { id: 2, label: "Node 2" },
+  // { id: 3, label: "Node 3" },
+]);
+
+const edges = new DataSet([
+  // { from: 1, to: 2 },
+  // { from: 2, to: 3 },
+]);
+
+const data = { nodes, edges };
+
+async function fetchData() {
+  const resultList = await pb.collection("interaction_nodes").getFullList({
+    filter: 'user_id="7ptk0ly7mhowlw2"',
+    expand: "node_id.infos.author",
+  });
+
+  for (let index = 0; index < resultList.length; index++) {
+    const element = resultList[index];
+
+    if (element.interaction == "like") {
+      // console.log(element.expand.node_id);
+      network.body.data.nodes.add({ id: element.expand.node_id.id, label: element.expand.node_id.title });
+    }
+
+    if (element.interaction == "notr") {
+    }
+
+    if (element.interaction == "dislike") {
+    }
+  }
+
+  // console.log(resultList);
+}
+
+
+  useEffect(() => {
+    const network1 = new Network(containerRef.current, data, options);
+
+    setNetwork(network1)
+
+    
+
+    return () => {
+      network1.destroy();
+    };
+  }, []);
 
   useEffect(() => {
     if (searchId != "") {
@@ -109,36 +161,6 @@ export default function Map() {
     }
   }, [searchId]);
 
-  const nodes = new DataSet([
-    // { id: 1, label: "Node 1" },
-    // { id: 2, label: "Node 2" },
-    // { id: 3, label: "Node 3" },
-  ]);
-
-  const edges = new DataSet([
-    // { from: 1, to: 2 },
-    // { from: 2, to: 3 },
-  ]);
-
-  const data = { nodes, edges };
-
-  // useEffect(() => {
-  //   function fetchData() {
-  //     try {
-  //       // Verileri bir API'den almak için await kullanın
-  //       // const authData = await pb.admins.authWithPassword('umut@gmail.com', 'Umut.talha12');
-  //       // const records = await pb.collection('nodes').getFullList({
-  //       //     sort: '-created',
-  //       // });
-  //     } catch (error) {
-  //       console.error("Veri alınırken bir hata oluştu:", error);
-  //     }
-  //   }
-
-  //   // async fonksiyonu çağırın
-  //   fetchData();
-  // }, []);
-
   const likeNode = () => {
     const updatedNode = network.body.data.nodes.get(openNode);
 
@@ -147,6 +169,7 @@ export default function Map() {
       network.body.data.nodes.update(updatedNode);
     }
     getNeighbour(openNode);
+    setOpen(false)
   };
 
   const notrNode = () => {
@@ -157,6 +180,7 @@ export default function Map() {
       network.body.data.nodes.update(updatedNode);
     }
     getNeighbour(openNode);
+    setOpen(false)
   };
 
   const dislikeNode = () => {
@@ -166,6 +190,7 @@ export default function Map() {
       updatedNode.color = "#C63D2F";
       network.body.data.nodes.update(updatedNode);
     }
+    setOpen(false)
   };
 
   const getNeighbour = async (nodeId) => {
@@ -176,15 +201,14 @@ export default function Map() {
       return node;
     });
 
-
-    console.log(nodeId)
-    const record = await pb.collection("nodes").getOne(nodeId);
+    const record = await pb.collection("nodes").getOne(nodeId, {
+      expand: 'neighbour_nodes',
+    });
 
     console.log(record)
 
     for (let i = 0; i < record.neighbour_nodes.length; i++) {
-
-      console.log(record.neighbour_nodes[i])
+      console.log(record.neighbour_nodes[i]);
 
       const komsu_node = await pb
         .collection("nodes")
@@ -201,14 +225,20 @@ export default function Map() {
         network.body.data.edges.add({
           from: komsu_node.id,
           to: record.id,
-          arrows: 'from'
+          arrows: "from",
         });
       } catch {}
     }
   };
 
   useEffect(() => {
+
+    console.log(network)
+
     if (network) {
+
+      fetchData();
+
       network.on("click", async function (params) {
         // var clickedNodeId = params.nodes[0];
 
@@ -220,19 +250,9 @@ export default function Map() {
     }
   }, [network]);
 
-  useEffect(() => {
-    const network1 = new Network(containerRef.current, data, options);
-
-    setNetwork(network1);
-
-    return () => {
-      network1.destroy();
-    };
-  }, []);
-
   const addNode = async () => {
     const record = await pb.collection("nodes").getOne("bmm3md7kprj6xmt", {
-      expand: "relField1,relField2.subRelField",
+      // expand: "relField1,relField2.subRelField",
     });
 
     network.body.data.nodes.add({ id: record.id, label: record.title });

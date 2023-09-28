@@ -3,6 +3,7 @@ import PersistentDrawerLeft from "../components/NavbarDrawer";
 import { Paper, Container, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import InfoCard from "../components/InfoCard";
+import { useMyContext } from "../UserContext";
 
 import pb from "../lib/pocketbase";
 
@@ -17,12 +18,15 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export default function Home() {
+
   const [infoList, setInfoList] = useState([]);
+
+  const { user } = useMyContext();
 
   useEffect(() => {
     async function fetchData() {
       const resultList = await pb.collection("interaction_nodes").getFullList({
-        filter: 'user_id="7ptk0ly7mhowlw2" && interaction="like"',
+        filter: `user_id="${user.id}" && interaction="1"`,
         expand: "node_id.infos.author",
       });
 
@@ -60,6 +64,9 @@ export default function Home() {
         {infoList.map((info) => (
           <div key={info.id}>
             <InfoCard
+              info_id={info.id}
+              profile_user_id={user.id}
+              profile_username={user.username}
               info_content={info.content}
               info_created={info.created}
               info_author={info.expand.author.username}

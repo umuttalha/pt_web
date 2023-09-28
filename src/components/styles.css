@@ -152,3 +152,8 @@ body {
     margin-right: 30px;
   }
   
+  :root {
+    --color-toggle-light: rgb(183, 255, 0);
+    --color-toggle-dark: bisque;
+  }
+  

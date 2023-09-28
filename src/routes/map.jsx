@@ -7,90 +7,12 @@ import SwipeableEdgeDrawer from "../components/InfoDrawer";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import DragIcon from "@mui/icons-material/DragIndicator";
+import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
 
 import { useMyContext } from "../UserContext";
 
-const options = {
-  layout: {
-    randomSeed: 2,
-    improvedLayout: false,
-    // hierarchical:true,
-  },
-  nodes: {
-    fixed: {
-      x: false,
-      y: false,
-    },
-    shape: "dot",
-    // scaling: {
-    // label: true,
-    // },
-    shapeProperties: {
-      interpolation: false,
-    },
-    color: {
-      background: "#fff",
-      border: "#8DDFCB",
-      // highlight: "#8DDFCB",
-    },
-
-    size: 20,
-    borderWidth: 1.5,
-    borderWidthSelected: 2,
-    font: {
-      size: 15,
-      align: "center",
-      bold: {
-        color: "#bffdc0",
-        size: 15,
-        vadjust: 0,
-        mod: "bold",
-      },
-    },
-  },
-
-  edges: {
-    width: 1.5,
-    color: {
-      color: "#D0D0D0",
-      highlight: "#797979",
-      hover: "#797979",
-    },
-    arrows: {
-      to: { enabled: true, scaleFactor: 1, type: "arrow" },
-      middle: { enabled: false, scaleFactor: 1, type: "arrow" },
-      from: { enabled: true, scaleFactor: 1, type: "arrow" },
-    },
-    smooth: {
-      type: "continuous",
-      roundness: 0,
-    },
-  },
-
-  physics: {
-    adaptiveTimestep: true,
-    barnesHut: {
-      gravitationalConstant: -8000,
-      centralGravity: 0.02, //
-      springConstant: 0.04,
-      springLength: 100,
-    },
-    stabilization: {
-      iterations: 987,
-    },
-    maxVelocity: 5,
-    minVelocity: 1,
-  },
-  interaction: {
-    dragNodes: true,
-    dragView: true,
-    zoomView: true,
-  },
-};
-
-
 export default function Map() {
-  const { user } = useMyContext();
+  const { user,theme } = useMyContext();
 
   const containerRef = useRef(null);
 
@@ -98,58 +20,178 @@ export default function Map() {
   const [network, setNetwork] = useState(null);
   const [searchId, setSearchId] = useState("");
 
-  const [openNode, setOpenNode] = useState(null);
 
+  const [options, setoptions] = useState({
+    layout: {
+      randomSeed: 2,
+      improvedLayout: false,
+      hierarchical: false,
+    },
+    nodes: {
+      fixed: {
+        x: false,
+        y: false,
+      },
+      shape: "dot",
+      // scaling: {
+      // label: true,
+      // },
+      shapeProperties: {
+        interpolation: false,
+      },
+      color: {
+        background: "#fff",
+        border: "#8DDFCB",
+        // highlight: "#8DDFCB",
+      },
 
-const nodes = new DataSet([
-  // { id: 1, label: "Node 1", color: "#8DDFCB" },
-  // { id: 2, label: "Node 2" },
-  // { id: 3, label: "Node 3" },
-]);
+      size: 20,
+      borderWidth: 1.5,
+      borderWidthSelected: 2,
+      font: {
+        size: 15,
+        align: "center",
+        color: '#B2533E',
+        bold: {
+          color: "#bffdc0",
+          size: 15,
+          vadjust: 0,
+          mod: "bold",
+        },
+      },
+    },
 
-const edges = new DataSet([
-  // { from: 1, to: 2 },
-  // { from: 2, to: 3 },
-]);
+    edges: {
+      width: 1.5,
+      color: {
+        color: "#D0D0D0",
+        highlight: "#797979",
+        hover: "#797979",
+      },
+      arrows: {
+        to: { enabled: true, scaleFactor: 1, type: "arrow" },
+        middle: { enabled: false, scaleFactor: 1, type: "arrow" },
+        from: { enabled: true, scaleFactor: 1, type: "arrow" },
+      },
+      smooth: {
+        type: "continuous",
+        roundness: 0,
+      },
+    },
 
-const data = { nodes, edges };
+    physics: {
+      adaptiveTimestep: true,
+      barnesHut: {
+        gravitationalConstant: -8000,
+        centralGravity: 0.02, //
+        springConstant: 0.04,
+        springLength: 100,
+      },
+      stabilization: {
+        iterations: 987,
+      },
+      maxVelocity: 5,
+      minVelocity: 1,
+    },
+    interaction: {
+      dragNodes: true,
+      dragView: true,
+      zoomView: true,
+    },
 
-async function fetchData() {
-  const resultList = await pb.collection("interaction_nodes").getFullList({
-    filter: 'user_id="7ptk0ly7mhowlw2"',
-    expand: "node_id.infos.author",
+    
   });
 
-  for (let index = 0; index < resultList.length; index++) {
-    const element = resultList[index];
 
-    if (element.interaction == "like") {
-      // console.log(element.expand.node_id);
-      network.body.data.nodes.add({ id: element.expand.node_id.id, label: element.expand.node_id.title });
-    }
 
-    if (element.interaction == "notr") {
-    }
+  const [openNode, setOpenNode] = useState(null);
 
-    if (element.interaction == "dislike") {
+  const nodes = new DataSet([]);
+
+  const edges = new DataSet([]);
+
+  const data = { nodes, edges };
+
+  async function fetchData() {
+    const resultList = await pb.collection("interaction_nodes").getFullList({
+      filter: 'user_id="7ptk0ly7mhowlw2"',
+      expand: "node_id.neighbour_nodes",
+    });
+
+    for (let index = 0; index < resultList.length; index++) {
+      const element = resultList[index];
+
+      if (element.interaction == 1) {
+        if (network.body.data.nodes.get(element.expand.node_id.id) == null)
+          network.body.data.nodes.add({
+            id: element.expand.node_id.id,
+            label: element.expand.node_id.title,
+            color: "#8DDFCB",
+          });
+
+        if (element.expand.node_id.expand?.neighbour_nodes != undefined) {
+          for (
+            let alt_komsu = 0;
+            alt_komsu < element.expand.node_id.expand?.neighbour_nodes.length;
+            alt_komsu++
+          ) {
+            const element1 =
+              element.expand.node_id.expand?.neighbour_nodes[alt_komsu];
+
+            if (network.body.data.nodes.get(element1.id) == null)
+              network.body.data.nodes.add({
+                id: element1.id,
+                label: element1.title,
+              });
+
+            network.body.data.edges.add({
+              from: element.expand.node_id.id,
+              to: element1.id,
+              arrows: "from",
+            });
+          }
+        }
+      }
+
+      if (element.interaction == 0) {
+        if (network.body.data.nodes.get(element.expand.node_id.id) == null)
+          network.body.data.nodes.add({
+            id: element.expand.node_id.id,
+            label: element.expand.node_id.title,
+            color: "#D2DE32",
+          });
+        else
+          network.body.data.nodes.update({
+            id: element.expand.node_id.id,
+            color: "#D2DE32",
+          });
+      }
+
+      if (element.interaction == -1) {
+        if (network.body.data.nodes.get(element.expand.node_id.id) == null)
+          network.body.data.nodes.add({
+            id: element.expand.node_id.id,
+            label: element.expand.node_id.title,
+            color: "#C63D2F",
+          });
+        else
+          network.body.data.nodes.update({
+            id: element.expand.node_id.id,
+            color: "#C63D2F",
+          });
+      }
     }
   }
-
-  // console.log(resultList);
-}
-
 
   useEffect(() => {
     const network1 = new Network(containerRef.current, data, options);
 
-    setNetwork(network1)
-
-    
+    setNetwork(network1);
 
     return () => {
       network1.destroy();
     };
-  }, []);
+  }, [options]);
 
   useEffect(() => {
     if (searchId != "") {
@@ -161,36 +203,65 @@ async function fetchData() {
     }
   }, [searchId]);
 
-  const likeNode = () => {
+  const likeNode = async() => {
     const updatedNode = network.body.data.nodes.get(openNode);
 
     if (updatedNode) {
       updatedNode.color = "#8DDFCB";
       network.body.data.nodes.update(updatedNode);
     }
+
+    console.log(updatedNode)
+
+    const data = {
+      "interaction": "like",
+      "user_id": user.id,
+      "node_id": updatedNode.id
+    };
+  
+    await pb.collection('interaction_nodes').create(data);
+
+
     getNeighbour(openNode);
-    setOpen(false)
+    setOpen(false);
   };
 
-  const notrNode = () => {
+  const notrNode = async() => {
     const updatedNode = network.body.data.nodes.get(openNode);
 
     if (updatedNode) {
       updatedNode.color = "#D2DE32";
       network.body.data.nodes.update(updatedNode);
     }
+
+    const data = {
+      "interaction": "notr",
+      "user_id": user.id,
+      "node_id": updatedNode.id
+    };
+  
+    await pb.collection('interaction_nodes').create(data);
     getNeighbour(openNode);
-    setOpen(false)
+    setOpen(false);
   };
 
-  const dislikeNode = () => {
+  const dislikeNode = async() => {
     const updatedNode = network.body.data.nodes.get(openNode);
 
     if (updatedNode) {
       updatedNode.color = "#C63D2F";
       network.body.data.nodes.update(updatedNode);
     }
-    setOpen(false)
+
+    const data = {
+      "interaction": "dislike",
+      "user_id": user.id,
+      "node_id": updatedNode.id
+    };
+  
+    await pb.collection('interaction_nodes').create(data);
+
+    setOpen(false);
   };
 
   const getNeighbour = async (nodeId) => {
@@ -202,14 +273,10 @@ async function fetchData() {
     });
 
     const record = await pb.collection("nodes").getOne(nodeId, {
-      expand: 'neighbour_nodes',
+      expand: "neighbour_nodes",
     });
 
-    console.log(record)
-
     for (let i = 0; i < record.neighbour_nodes.length; i++) {
-      console.log(record.neighbour_nodes[i]);
-
       const komsu_node = await pb
         .collection("nodes")
         .getOne(record.neighbour_nodes[i]);
@@ -232,13 +299,8 @@ async function fetchData() {
   };
 
   useEffect(() => {
-
-    console.log(network)
-
     if (network) {
-
       fetchData();
-
       network.on("click", async function (params) {
         // var clickedNodeId = params.nodes[0];
 
@@ -250,7 +312,7 @@ async function fetchData() {
     }
   }, [network]);
 
-  const addNode = async () => {
+  const showNode = async () => {
     const record = await pb.collection("nodes").getOne("bmm3md7kprj6xmt", {
       // expand: "relField1,relField2.subRelField",
     });
@@ -274,13 +336,24 @@ async function fetchData() {
     network.moveTo({ scale: newScale });
   }
 
+  function hierarchical() {
+    const newOptions = {
+      ...options,
+      layout: {
+        ...options.layout,
+        hierarchical: true,
+      },
+    };
+    setoptions(newOptions);
+  }
+
   return (
     <>
       <PersistentDrawerLeft setSearchId={setSearchId} />
 
       <Button
         variant="contained"
-        onClick={addNode}
+        onClick={showNode}
         style={{
           zIndex: 2,
           position: "absolute",
@@ -313,6 +386,15 @@ async function fetchData() {
           zIndex: 100,
         }}
       >
+        <Button
+          variant="contained"
+          size="small"
+          onClick={hierarchical}
+          color="success"
+          sx={{ marginRight: "8px" }}
+        >
+          <SystemUpdateAltIcon />
+        </Button>
         <Button variant="contained" size="small" onClick={zoomIn} color="info">
           <ZoomInIcon />
         </Button>

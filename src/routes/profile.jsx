@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
 import PersistentDrawerLeft from "../components/NavbarDrawer";
 import pb from "../lib/pocketbase";
-import { useMyContext } from "../UserContext";
 import { useLocation } from "react-router-dom";
 import InfoCard from "../components/InfoCard";
-
+import { useMyContext } from "../UserContext";
 import {
   Avatar,
   Typography,
@@ -17,31 +16,18 @@ import {
 
 import ProfileMap from "../components/ProfileMap";
 
-function CenteredBox({ children }) {
-  return (
-    <div
-      style={{
-        border: "1px solid rgba(0, 0, 0, 0.1)",
-        boxShadow: "1px 1px 2px rgba(0, 0, 0, 0.05)",
-        fontSize: 18,
-        padding: 4,
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
-      {children}
-    </div>
-  );
-}
-
 export default function Profile() {
+
   const { user } = useMyContext();
 
   const location = useLocation();
   const currentPath = location.pathname;
 
+  const [totalInfoCount, settotalInfoCount] = useState("")
+
   const profileName = currentPath.slice(1);
 
+  console.log(user.username)
   console.log(profileName)
 
   const [infoList, setInfoList] = useState([]);
@@ -53,13 +39,11 @@ export default function Profile() {
         expand: "author",
       });
 
-      // const mapList = await pb.collection("interaction_nodes").getFullList({
-      //   filter: `user_id.username="${profileName}"`,
-      //   expand: "node_id.infos.author",
-      // });
-
-      // console.log(mapList)
+      settotalInfoCount(resultList.totalItems)
       setInfoList(resultList.items);
+
+
+
     }
 
     fetchData();
@@ -77,11 +61,10 @@ export default function Profile() {
           <Grid item xs={12} md={12} style={{ marginBottom: "12px" }}>
             <div style={{ textAlign: "center" }}>
               <Typography variant="h4">{profileName}</Typography>
-              <Typography variant="body1">Added Info: 4</Typography>
-              <Typography variant="body1">interested topic: 36</Typography>
-              <Button variant="contained" color="primary">
+              <Typography variant="body1">Added Info: {totalInfoCount}</Typography>
+              {/* <Button variant="contained" color="primary">
                 Takip Et
-              </Button>
+              </Button> */}
             </div>
           </Grid>
 
@@ -96,6 +79,9 @@ export default function Profile() {
               style={{ marginBottom: "20px" }}
             >
               <InfoCard
+                info_id={info.id}
+                profile_user_id={user.id}
+                profile_username={user.username}
                 info_content={info.content}
                 info_created={info.created}
                 info_author={info.expand.author.username}

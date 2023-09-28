@@ -18,6 +18,7 @@ import TextField from "@mui/material/TextField";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import Alert from "@mui/material/Alert";
+import { useMyContext } from "../UserContext";
 
 import pb from "../lib/pocketbase";
 
@@ -58,6 +59,7 @@ export default function SwipeableEdgeDrawer({
   };
 
   const [addInfoModalOpen, setAddInfoModalOpen] = useState(false);
+  const { user } = useMyContext();
 
   const [addTitle, setAddTitle] = useState("");
   const [addContent, setAddContent] = useState("");
@@ -228,6 +230,9 @@ export default function SwipeableEdgeDrawer({
             {infoList.map((info) => (
               <div key={info.id}>
                 <InfoCard
+                  info_id={info.id}
+                  profile_user_id={user.id}
+                  profile_username={user.username}
                   info_content={info.content}
                   info_created={info.created}
                   info_author={info.expand.author.username}

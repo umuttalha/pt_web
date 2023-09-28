@@ -30,6 +30,10 @@ import { Link } from "react-router-dom";
 import SignInModal from "./StartModal";
 import SearchModal from "./SearchModal";
 
+import { createTheme } from "@mui/material";
+
+import ReactThemeToggleButton from "./ReactThemeToggleButton";
+import "./styles.css";
 
 import pb from "../lib/pocketbase";
 
@@ -83,12 +87,28 @@ export default function PersistentDrawerLeft({ setSearchId }) {
   // const theme = useTheme();
   const [open, setOpen] = React.useState(false);
 
-  const { user, setUser } = useMyContext();
-
+  const { user, setUser, theme, setTheme } = useMyContext();
 
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const lightTheme = createTheme({
+    palette: {
+      mode: "light",
+    },
+  });
+
+  const darkTheme = createTheme({
+    palette: {
+      mode: "dark",
+    },
+  });
+
+  const setThemeButton = () => {
+    const newTheme = theme.palette.mode === "light" ? darkTheme : lightTheme;
+    setTheme(newTheme);
+  };
 
   const openSearchModal = () => {
     setIsSearchModalOpen(true);
@@ -152,10 +172,9 @@ export default function PersistentDrawerLeft({ setSearchId }) {
               </span>
             </Link>
           </Typography>
-
           {user ? (
             <Button
-              sx={{ position: "absolute", right: "12px", color: "white" }}
+              sx={{ position: "absolute", right: "12px"}}
               onClick={openSearchModal}
             >
               <SearchIcon />
@@ -214,6 +233,11 @@ export default function PersistentDrawerLeft({ setSearchId }) {
           <IconButton onClick={handleDrawerClose}>
             <ChevronLeftIcon />
           </IconButton>
+          <ReactThemeToggleButton
+            isDark={theme}
+            invertedIconLogic
+            onChange={setThemeButton}
+          />
         </DrawerHeader>
         <Divider />
 

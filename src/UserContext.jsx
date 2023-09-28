@@ -33,7 +33,7 @@ export function MyProvider({ children }) {
   const [theme, setTheme] = useState(
     createTheme({
       palette: {
-        mode: "light",
+        mode: "dark",
       },
     })
   );

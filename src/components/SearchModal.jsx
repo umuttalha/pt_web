@@ -4,6 +4,8 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
+import { useMyContext } from "../UserContext";
+
 import {
   Button,
   Dialog,
@@ -15,6 +17,7 @@ import {
   TextField,
   Alert,
 } from "@mui/material";
+
 
 import pb from "../lib/pocketbase";
 
@@ -30,6 +33,8 @@ const SearchModal = ({ isOpen, onClose, setSearchId }) => {
   const currentPath = location.pathname;
   
   const navigate = useNavigate();
+
+  const { theme } = useMyContext();
 
   const handleTabChange = (event, newValue) => {
     setValue(newValue);
@@ -85,6 +90,7 @@ const SearchModal = ({ isOpen, onClose, setSearchId }) => {
       onClose={onClose}
       aria-labelledby="search-modal-title"
       aria-describedby="search-modal-description"
+      
     >
       <div
         style={{
@@ -94,7 +100,6 @@ const SearchModal = ({ isOpen, onClose, setSearchId }) => {
           transform: "translate(-50%, -50%)",
           width: 300,
           height: 300,
-          backgroundColor: "white",
           boxShadow: 24,
           p: 4,
           textAlign: "center",

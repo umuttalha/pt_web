@@ -44,7 +44,10 @@ const InfoCard = ({
   info_tags,
   info_title,
   info_type,
+  setInfosIdList,
+  infosIdList
 }) => {
+  
   function shortenText(text) {
     if (text.length > 30) {
       return text.substring(0, 30) + "...";
@@ -72,7 +75,13 @@ const InfoCard = ({
   };
 
   const handleClickDelete = async () => {
-    await pb.collection("posts").delete(info_id);
+    const aaa = await pb.collection("posts").delete(info_id);
+
+    if(setInfosIdList){
+      const newInfosIdList = infosIdList.filter(item => item !== info_id);
+      setInfosIdList(newInfosIdList)
+    }
+    
     setIsVisible(!isVisible);
   };
 

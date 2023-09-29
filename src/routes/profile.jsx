@@ -15,20 +15,24 @@ import {
 } from "@mui/material";
 
 import ProfileMap from "../components/ProfileMap";
+import FacebookIcon from "@mui/icons-material/Facebook";
+import PinterestIcon from '@mui/icons-material/Pinterest';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import TwitterIcon from '@mui/icons-material/Twitter';
+import RedditIcon from '@mui/icons-material/Reddit';
 
 export default function Profile() {
-
   const { user } = useMyContext();
 
   const location = useLocation();
   const currentPath = location.pathname;
 
-  const [totalInfoCount, settotalInfoCount] = useState("")
+  const [totalInfoCount, settotalInfoCount] = useState("");
 
   const profileName = currentPath.slice(1);
 
-  console.log(user.username)
-  console.log(profileName)
+  console.log(user.username);
+  console.log(profileName);
 
   const [infoList, setInfoList] = useState([]);
 
@@ -39,11 +43,8 @@ export default function Profile() {
         expand: "author",
       });
 
-      settotalInfoCount(resultList.totalItems)
+      settotalInfoCount(resultList.totalItems);
       setInfoList(resultList.items);
-
-
-
     }
 
     fetchData();
@@ -61,14 +62,35 @@ export default function Profile() {
           <Grid item xs={12} md={12} style={{ marginBottom: "12px" }}>
             <div style={{ textAlign: "center" }}>
               <Typography variant="h4">{profileName}</Typography>
-              <Typography variant="body1">Added Info: {totalInfoCount}</Typography>
+              <Typography variant="body1">
+                Added Info: {totalInfoCount}
+              </Typography>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "10px",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  marginBottom: "16px",
+                  marginTop: "8px",
+                }}
+              >
+                <FacebookIcon style={{ cursor: 'pointer' }}/>
+                <PinterestIcon style={{ cursor: 'pointer' }}/>
+                <InstagramIcon style={{ cursor: 'pointer' }}/>
+                <TwitterIcon style={{ cursor: 'pointer' }}/>
+                <RedditIcon style={{ cursor: 'pointer' }}/>
+                
+              </div>
               {/* <Button variant="contained" color="primary">
                 Takip Et
               </Button> */}
             </div>
           </Grid>
 
-          <ProfileMap />
+          <Grid item xs={12} md={12} style={{ marginBottom: "20px", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <ProfileMap />
+          </Grid>
 
           {infoList.map((info) => (
             <Grid

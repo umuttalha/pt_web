@@ -16,7 +16,7 @@ export default function ProfileMap({ profileName }) {
     layout: {
       randomSeed: 2,
       improvedLayout: false,
-      hierarchical: false,
+      hierarchical: true,
     },
     nodes: {
       fixed: {
@@ -101,7 +101,7 @@ export default function ProfileMap({ profileName }) {
 
   async function fetchData() {
     const resultList = await pb.collection("interaction_nodes").getFullList({
-      filter: 'user_id="7ptk0ly7mhowlw2"',
+      filter: `user_id="${user.id}"`,
       expand: "node_id.neighbour_nodes",
     });
 

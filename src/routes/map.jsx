@@ -12,14 +12,13 @@ import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
 import { useMyContext } from "../UserContext";
 
 export default function Map() {
-  const { user,theme } = useMyContext();
+  const { user, theme } = useMyContext();
 
   const containerRef = useRef(null);
 
   const [open, setOpen] = useState(false);
   const [network, setNetwork] = useState(null);
   const [searchId, setSearchId] = useState("");
-
 
   const [options, setoptions] = useState({
     layout: {
@@ -51,7 +50,7 @@ export default function Map() {
       font: {
         size: 15,
         align: "center",
-        color: '#B2533E',
+        color: "#7D7C7C",
         bold: {
           color: "#bffdc0",
           size: 15,
@@ -98,11 +97,7 @@ export default function Map() {
       dragView: true,
       zoomView: true,
     },
-
-    
   });
-
-
 
   const [openNode, setOpenNode] = useState(null);
 
@@ -114,7 +109,7 @@ export default function Map() {
 
   async function fetchData() {
     const resultList = await pb.collection("interaction_nodes").getFullList({
-      filter: 'user_id="7ptk0ly7mhowlw2"',
+      filter: `user_id="${user.id}"`,
       expand: "node_id.neighbour_nodes",
     });
 
@@ -138,33 +133,59 @@ export default function Map() {
             const element1 =
               element.expand.node_id.expand?.neighbour_nodes[alt_komsu];
 
-            if (network.body.data.nodes.get(element1.id) == null)
+            if (network.body.data.nodes.get(element1.id) == null) {
               network.body.data.nodes.add({
                 id: element1.id,
                 label: element1.title,
               });
 
-            network.body.data.edges.add({
-              from: element.expand.node_id.id,
-              to: element1.id,
-              arrows: "from",
-            });
+              network.body.data.edges.add({
+                from: element.expand.node_id.id,
+                to: element1.id,
+                arrows: "from",
+              });
+            }
           }
         }
       }
 
       if (element.interaction == 0) {
-        if (network.body.data.nodes.get(element.expand.node_id.id) == null)
+        if (network.body.data.nodes.get(element.expand.node_id.id) == null) {
           network.body.data.nodes.add({
             id: element.expand.node_id.id,
             label: element.expand.node_id.title,
             color: "#D2DE32",
           });
-        else
+        } else {
           network.body.data.nodes.update({
             id: element.expand.node_id.id,
             color: "#D2DE32",
           });
+        }
+
+        if (element.expand.node_id.expand?.neighbour_nodes != undefined) {
+          for (
+            let alt_komsu = 0;
+            alt_komsu < element.expand.node_id.expand?.neighbour_nodes.length;
+            alt_komsu++
+          ) {
+            const element1 =
+              element.expand.node_id.expand?.neighbour_nodes[alt_komsu];
+
+            if (network.body.data.nodes.get(element1.id) == null) {
+              network.body.data.nodes.add({
+                id: element1.id,
+                label: element1.title,
+              });
+
+              network.body.data.edges.add({
+                from: element.expand.node_id.id,
+                to: element1.id,
+                arrows: "from",
+              });
+            }
+          }
+        }
       }
 
       if (element.interaction == -1) {
@@ -203,7 +224,7 @@ export default function Map() {
     }
   }, [searchId]);
 
-  const likeNode = async() => {
+  const likeNode = async () => {
     const updatedNode = network.body.data.nodes.get(openNode);
 
     if (updatedNode) {
@@ -211,22 +232,20 @@ export default function Map() {
       network.body.data.nodes.update(updatedNode);
     }
 
-    console.log(updatedNode)
 
     const data = {
-      "interaction": "like",
-      "user_id": user.id,
-      "node_id": updatedNode.id
+      interaction: "1",
+      user_id: user.id,
+      node_id: updatedNode.id,
     };
-  
-    await pb.collection('interaction_nodes').create(data);
 
+    await pb.collection("interaction_nodes").create(data);
 
     getNeighbour(openNode);
     setOpen(false);
   };
 
-  const notrNode = async() => {
+  const notrNode = async () => {
     const updatedNode = network.body.data.nodes.get(openNode);
 
     if (updatedNode) {
@@ -235,17 +254,17 @@ export default function Map() {
     }
 
     const data = {
-      "interaction": "notr",
-      "user_id": user.id,
-      "node_id": updatedNode.id
+      interaction: "0",
+      user_id: user.id,
+      node_id: updatedNode.id,
     };
-  
-    await pb.collection('interaction_nodes').create(data);
+
+    await pb.collection("interaction_nodes").create(data);
     getNeighbour(openNode);
     setOpen(false);
   };
 
-  const dislikeNode = async() => {
+  const dislikeNode = async () => {
     const updatedNode = network.body.data.nodes.get(openNode);
 
     if (updatedNode) {
@@ -254,12 +273,12 @@ export default function Map() {
     }
 
     const data = {
-      "interaction": "dislike",
-      "user_id": user.id,
-      "node_id": updatedNode.id
+      interaction: "-1",
+      user_id: user.id,
+      node_id: updatedNode.id,
     };
-  
-    await pb.collection('interaction_nodes').create(data);
+
+    await pb.collection("interaction_nodes").create(data);
 
     setOpen(false);
   };

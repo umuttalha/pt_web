@@ -6,6 +6,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { useMyContext } from "../UserContext";
 
+import "./searchModal.css";
+
 import {
   Button,
   Dialog,
@@ -16,8 +18,8 @@ import {
   Tabs,
   TextField,
   Alert,
+  Container,
 } from "@mui/material";
-
 
 import pb from "../lib/pocketbase";
 
@@ -31,7 +33,7 @@ const SearchModal = ({ isOpen, onClose, setSearchId }) => {
 
   const location = useLocation();
   const currentPath = location.pathname;
-  
+
   const navigate = useNavigate();
 
   const { theme } = useMyContext();
@@ -76,7 +78,6 @@ const SearchModal = ({ isOpen, onClose, setSearchId }) => {
   }, [searchQuery]);
 
   const handleRecordClickTopic = (record) => {
-
     if (currentPath != "/map") {
       navigate("/map");
     } else {
@@ -90,21 +91,30 @@ const SearchModal = ({ isOpen, onClose, setSearchId }) => {
       onClose={onClose}
       aria-labelledby="search-modal-title"
       aria-describedby="search-modal-description"
-      
     >
       <div
+        className="searchModal"
         style={{
           position: "absolute",
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: 300,
-          height: 300,
+          width: "70%",
+          height: "50%",
           boxShadow: 24,
           p: 4,
           textAlign: "center",
-          overflowY: "scroll", // Y ekseni boyunca kaydırma eklendi
-          maxHeight: "80vh",  // 
+          overflowY: "scroll",
+
+          display: "flex",  //tablar için
+          flexDirection: "column", // Tabları dikey olarak düzenle
+          alignItems: "center", // Tabları ortala
+
+
+          // maxHeight: "80vh",
+          border: "2px solid grey",
+          borderRadius: "5px",
+          background: theme.palette.searchBackground.main,
         }}
       >
         {currentPath != "/map" && (
@@ -148,11 +158,7 @@ const SearchModal = ({ isOpen, onClose, setSearchId }) => {
                 to={`/${record.username}`}
                 style={{ textDecoration: "none" }}
               >
-                <Button
-                  variant="outlined"
-                >
-                  Detayları Görüntüle
-                </Button>
+                <Button variant="outlined">Detayları Görüntüle</Button>
               </Link>
             </div>
           ))}

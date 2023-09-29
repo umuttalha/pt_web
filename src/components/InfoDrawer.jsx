@@ -70,13 +70,20 @@ export default function SwipeableEdgeDrawer({
   const [addTags, setAddTags] = useState([]);
   const [addTagInput, setAddTagInput] = useState("");
 
+  const [nodeTitle, setNodeTitle] = useState("");
+  const [nodeContent, setNodeContent] = useState("");
+  const [nodeTags, setNodeTags] = useState(null);
+  const [infoList, setInfoList] = useState([]);
+
+  const [infosIdList, setInfosIdList] = useState([]);
+
   const handleTagInputChange = (e) => {
     setAddTagInput(e.target.value);
   };
 
   const handleTagAdd = () => {
-    if (tagInput.trim() !== "") {
-      setTags([...addTags, tagInput.trim()]);
+    if (addTagInput.trim() !== "") {
+      setAddTags([...addTags, addTagInput.trim()]);
       setAddTagInput("");
     }
   };
@@ -88,10 +95,41 @@ export default function SwipeableEdgeDrawer({
 
   const options = ["Article", "Book", "Video", "Podcast", "Course"];
 
-  const handleSave = () => {
-    // Verileri kaydetme işlemlerini burada yapabilirsiniz.
-    // Örneğin, bu verileri bir API'ye gönderebilirsiniz.
-    // Verileri sıfırla ve modalı kapat
+  const handleSave = async () => {
+    const data_add = {
+      type: addSelectedOption,
+      title: addTitle,
+      content: addContent,
+      source: addSource,
+      author: user.id,
+      tags: addTags,
+    };
+
+    const response_add = await pb.collection("posts").create(data_add);
+
+    setInfosIdList([...infosIdList, response_add.id]);
+
+    const data_update = {
+      infos: [...infosIdList, response_add.id],
+    };
+
+    const record_update = await pb
+      .collection("nodes")
+      .update(openNode, data_update);
+
+
+
+    const updatedObject = { ...response_add };
+
+
+    updatedObject.expand = {};
+    updatedObject.expand.author = {};
+    updatedObject.expand.author.username = user.username;
+
+    setInfoList([...infoList, updatedObject]);
+
+
+    setInfosIdList([...infosIdList, response_add.id]);
 
     if (!addTitle || !addSelectedOption) {
       setAddAlertVisible(true);
@@ -122,11 +160,6 @@ export default function SwipeableEdgeDrawer({
     setAddInfoModalOpen(false);
   };
 
-  const [nodeTitle, setNodeTitle] = useState("");
-  const [nodeContent, setNodeContent] = useState("");
-  const [nodeTags, setNodeTags] = useState(null);
-  const [infoList, setInfoList] = useState([]);
-
   useEffect(() => {
     async function fetchData() {
       const record = await pb.collection("nodes").getOne(openNode, {
@@ -137,11 +170,18 @@ export default function SwipeableEdgeDrawer({
       setNodeContent(record.content);
       setNodeTags(record.application_areas);
 
-      setInfoList(record.expand.infos);
-    }
+      setInfosIdList(record.infos);
 
+      if (record.infos != []) setInfoList(record.expand.infos);
+    }
+    setInfoList([]);
     fetchData();
   }, [openNode]);
+
+  const swipeableDrawerClose = () => {
+    setOpen(false);
+    // setInfoList([]);
+  };
 
   return (
     <Root>
@@ -156,7 +196,7 @@ export default function SwipeableEdgeDrawer({
       <SwipeableDrawer
         anchor="bottom"
         open={open}
-        onClose={toggleDrawer(false)}
+        onClose={swipeableDrawerClose}
         onOpen={toggleDrawer(true)}
         disableSwipeToOpen={false}
         ModalProps={{
@@ -240,6 +280,8 @@ export default function SwipeableEdgeDrawer({
                   info_tags={info.tags}
                   info_title={info.title}
                   info_type={info.type}
+                  setInfosIdList={setInfosIdList}
+                  infosIdList={infosIdList}
                 />
               </div>
             ))}

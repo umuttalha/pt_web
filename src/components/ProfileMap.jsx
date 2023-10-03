@@ -42,7 +42,7 @@ export default function ProfileMap({ profileName }) {
       font: {
         size: 15,
         align: "center",
-        color: "#B2533E",
+        color: "#7D7C7C",
         bold: {
           color: "#bffdc0",
           size: 15,
@@ -101,7 +101,7 @@ export default function ProfileMap({ profileName }) {
 
   async function fetchData() {
     const resultList = await pb.collection("interaction_nodes").getFullList({
-      filter: `user_id="${user.id}"`,
+      filter: `user_id.username="${profileName}"`,
       expand: "node_id.neighbour_nodes",
     });
 

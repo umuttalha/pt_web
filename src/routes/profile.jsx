@@ -3,7 +3,6 @@ import PersistentDrawerLeft from "../components/NavbarDrawer";
 import pb from "../lib/pocketbase";
 import { useLocation } from "react-router-dom";
 import InfoCard from "../components/InfoCard";
-import { useMyContext } from "../UserContext";
 import {
   Avatar,
   Typography,
@@ -16,23 +15,20 @@ import {
 
 import ProfileMap from "../components/ProfileMap";
 import FacebookIcon from "@mui/icons-material/Facebook";
-import PinterestIcon from '@mui/icons-material/Pinterest';
-import InstagramIcon from '@mui/icons-material/Instagram';
-import TwitterIcon from '@mui/icons-material/Twitter';
-import RedditIcon from '@mui/icons-material/Reddit';
+import PinterestIcon from "@mui/icons-material/Pinterest";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import TwitterIcon from "@mui/icons-material/Twitter";
+import RedditIcon from "@mui/icons-material/Reddit";
 
 export default function Profile() {
-  const { user } = useMyContext();
-
   const location = useLocation();
   const currentPath = location.pathname;
 
   const [totalInfoCount, settotalInfoCount] = useState("");
 
+  const [profile, setProfile] = useState("");
+  2;
   const profileName = currentPath.slice(1);
-
-  console.log(user.username);
-  console.log(profileName);
 
   const [infoList, setInfoList] = useState([]);
 
@@ -43,6 +39,12 @@ export default function Profile() {
         expand: "author",
       });
 
+      const profileInfos = await pb
+        .collection("users")
+        .getFirstListItem(`username="${profileName}"`);
+
+      setProfile(profileInfos);
+
       settotalInfoCount(resultList.totalItems);
       setInfoList(resultList.items);
     }
@@ -50,9 +52,7 @@ export default function Profile() {
     fetchData();
   }, []);
 
-  //profile name ile user aynı ise başka component dönsün card componentleri silinebilir olsun falan. info card ın içinde de yapılabilir bu.
-
-  // if username not exist return 404 page yoksa normak alttaki conponenti return de
+  console.log(profile);
 
   return (
     <>
@@ -61,10 +61,17 @@ export default function Profile() {
         <Grid container spacing={2}>
           <Grid item xs={12} md={12} style={{ marginBottom: "12px" }}>
             <div style={{ textAlign: "center" }}>
-              <Typography variant="h4">{profileName}</Typography>
-              <Typography variant="body1">
-                Added Info: {totalInfoCount}
-              </Typography>
+              {profile != "" ? (
+                <>
+                  <Typography variant="h4">{profileName}</Typography>
+                  <Typography variant="body1">
+                    Added Info: {totalInfoCount}
+                  </Typography>
+                </>
+              ) : (
+                "Profile not found"
+              )}
+
               <div
                 style={{
                   display: "flex",
@@ -75,12 +82,56 @@ export default function Profile() {
                   marginTop: "8px",
                 }}
               >
-                <FacebookIcon style={{ cursor: 'pointer' }}/>
-                <PinterestIcon style={{ cursor: 'pointer' }}/>
-                <InstagramIcon style={{ cursor: 'pointer' }}/>
-                <TwitterIcon style={{ cursor: 'pointer' }}/>
-                <RedditIcon style={{ cursor: 'pointer' }}/>
-                
+                {profile.profile_reddit ? (
+                  <RedditIcon
+                    style={{ cursor: "pointer" }}
+                    onClick={() =>
+                      window.open(profile.profile_reddit, "_blank")
+                    }
+                  />
+                ) : (
+                  ""
+                )}
+                {profile.profile_facebook ? (
+                  <FacebookIcon
+                    style={{ cursor: "pointer" }}
+                    onClick={() =>
+                      window.open(profile.profile_facebook, "_blank")
+                    }
+                  />
+                ) : (
+                  ""
+                )}
+                {profile.profile_pinterest ? (
+                  <PinterestIcon
+                    style={{ cursor: "pointer" }}
+                    onClick={() =>
+                      window.open(profile.profile_pinterest, "_blank")
+                    }
+                  />
+                ) : (
+                  ""
+                )}
+                {profile.profile_instagram ? (
+                  <InstagramIcon
+                    style={{ cursor: "pointer" }}
+                    onClick={() =>
+                      window.open(profile.profile_instagram, "_blank")
+                    }
+                  />
+                ) : (
+                  ""
+                )}
+                {profile.profile_twitter ? (
+                  <TwitterIcon
+                    style={{ cursor: "pointer" }}
+                    onClick={() =>
+                      window.open(profile.profile_twitter, "_blank")
+                    }
+                  />
+                ) : (
+                  ""
+                )}
               </div>
               {/* <Button variant="contained" color="primary">
                 Takip Et
@@ -88,9 +139,23 @@ export default function Profile() {
             </div>
           </Grid>
 
-          <Grid item xs={12} md={12} style={{ marginBottom: "20px", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <ProfileMap />
-          </Grid>
+          {profile != "" ? (
+            <Grid
+              item
+              xs={12}
+              md={12}
+              style={{
+                marginBottom: "20px",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <ProfileMap profileName={profileName} />
+            </Grid>
+          ) : (
+            ""
+          )}
 
           {infoList.map((info) => (
             <Grid
@@ -102,8 +167,8 @@ export default function Profile() {
             >
               <InfoCard
                 info_id={info.id}
-                profile_user_id={user.id}
-                profile_username={user.username}
+                profile_user_id={profile.id}
+                profile_username={profile.username}
                 info_content={info.content}
                 info_created={info.created}
                 info_author={info.expand.author.username}

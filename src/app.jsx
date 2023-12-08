@@ -13,14 +13,7 @@ import Settings from "./routes/settings";
 import AddNode from "./routes/addnode";
 import { useMyContext } from "./UserContext";
 import Home from "./routes/home";
-import {
-  Button,
-  createTheme,
-  Paper,
-  ThemeProvider,
-  Typography,
-  CssBaseline,
-} from "@mui/material";
+import { ThemeProvider, CssBaseline} from "@mui/material";
 
 function App() {
   const { user, theme } = useMyContext();

@@ -343,17 +343,17 @@ export default function Map() {
     });
   };
 
-  function zoomIn() {
-    const currentScale = network.getScale();
-    const newScale = currentScale * 1.2;
-    network.moveTo({ scale: newScale });
-  }
+  // function zoomIn() {
+  //   const currentScale = network.getScale();
+  //   const newScale = currentScale * 1.2;
+  //   network.moveTo({ scale: newScale });
+  // }
 
-  function zoomOut() {
-    const currentScale = network.getScale();
-    const newScale = currentScale / 1.2;
-    network.moveTo({ scale: newScale });
-  }
+  // function zoomOut() {
+  //   const currentScale = network.getScale();
+  //   const newScale = currentScale / 1.2;
+  //   network.moveTo({ scale: newScale });
+  // }
 
   function hierarchical() {
     const newOptions = {
@@ -414,12 +414,12 @@ export default function Map() {
         >
           <SystemUpdateAltIcon />
         </Button>
-        <Button variant="contained" size="small" onClick={zoomIn} color="info">
+        {/* <Button variant="contained" size="small" onClick={zoomIn} color="info">
           <ZoomInIcon />
         </Button>
         <Button variant="contained" size="small" onClick={zoomOut} color="info">
           <ZoomOutIcon />
-        </Button>
+        </Button> */}
       </div>
     </>
   );

@@ -21,19 +21,19 @@ body {
     /* color: var(--accent); */
   }
   
-  * {
+  /* * {
     font-family: "Plaster", sans-serif;
     font-style: normal;
     -webkit-font-smoothing: antialiased;
-  }
+  } */
   
-  h1,
+  /* h1,
   h2,
   h3 {
     font-family: sofia-pro, sans-serif;
     font-weight: 600;
     font-style: normal;
-  }
+  } */
   
   h1 {
     font-size: 36px;
@@ -56,12 +56,12 @@ body {
   
  
   
-  code {
+  /* code {
     font-family: input-mono, monospace;
     font-weight: 400;
     font-style: normal;
   }
-  
+   */
   /* ::-webkit-scrollbar {
     height: 5px;
     width: 5px;

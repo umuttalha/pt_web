@@ -34,7 +34,7 @@ export default function Profile() {
 
   useEffect(() => {
     async function fetchData() {
-      const resultList = await pb.collection("posts").getList(1, 3, {
+      const resultList = await pb.collection("posts").getList(1, 7, {
         filter: `author.username='${profileName}'`,
         expand: "author",
       });

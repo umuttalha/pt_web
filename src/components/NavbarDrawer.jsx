@@ -32,7 +32,7 @@ import SearchModal from "./SearchModal";
 
 import { createTheme } from "@mui/material";
 
-import { customDarkPalette,customLightPalette } from "../CustomPalette";
+import { customDarkPalette, customLightPalette } from "../CustomPalette";
 
 import ReactThemeToggleButton from "./ReactThemeToggleButton";
 import "./styles.css";
@@ -96,6 +96,10 @@ export default function PersistentDrawerLeft({ setSearchId }) {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const lightTheme = createTheme({
+    typography: {
+      fontFamily: "MyFont, sans-serif", // Yukarıdaki font adını buraya ekleyin
+    },
+
     palette: {
       mode: "light",
       ...customLightPalette,
@@ -103,6 +107,10 @@ export default function PersistentDrawerLeft({ setSearchId }) {
   });
 
   const darkTheme = createTheme({
+    typography: {
+      fontFamily: "MyFont, sans-serif", // Yukarıdaki font adını buraya ekleyin
+    },
+
     palette: {
       mode: "dark",
       ...customDarkPalette,
@@ -139,7 +147,7 @@ export default function PersistentDrawerLeft({ setSearchId }) {
   };
 
   return (
-    <Box sx={{ display: "flex"}}>
+    <Box sx={{ display: "flex" }}>
       {/* <CssBaseline /> */}
       <AppBar position="fixed" open={open}>
         <Toolbar>
@@ -226,9 +234,8 @@ export default function PersistentDrawerLeft({ setSearchId }) {
           flexShrink: 0,
           "& .MuiDrawer-paper": {
             width: drawerWidth,
-            height:"100%",
+            height: "100%",
             boxSizing: "border-box",
-
           },
         }}
         variant="persistent"

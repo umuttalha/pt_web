@@ -36,10 +36,7 @@ function SignInModal({ setModalOpen, isOpen, onClose }) {
 
   const handleLogin = async () => {
     try {
-      const authData = await pb
-        .collection("users")
-        .authWithPassword(loginEmail, loginPassword)
-        .then(() => setUser(pb.authStore.model));
+      const authData = await pb.collection("users").authWithPassword(loginEmail, loginPassword).then(() => setUser(pb.authStore.model));
       setModalOpen(false);
       // setIsDrawerOpen(false)
       setLoginPassword("");

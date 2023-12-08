@@ -12,6 +12,10 @@ export function MyProvider({ children }) {
 
   const [theme, setTheme] = useState(
     createTheme({
+
+      typography: {
+        fontFamily: 'MyFont, sans-serif', // Yukarıdaki font adını buraya ekleyin
+      },
       palette: {
         mode: "dark",
         ...customDarkPalette,

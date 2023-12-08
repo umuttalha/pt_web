@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import PersistentDrawerLeft from "../components/NavbarDrawer";
-import { Paper, Container, Typography } from "@mui/material";
+import { Paper, Container, Typography, Button,Card ,CardContent,CardActions,IconButton} from "@mui/material";
 import { styled } from "@mui/material/styles";
 import InfoCard from "../components/InfoCard";
 import { useMyContext } from "../UserContext";
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
+import ThumbDownIcon from '@mui/icons-material/ThumbDown';
+import BlockIcon from '@mui/icons-material/Block';
 
 import pb from "../lib/pocketbase";
 
@@ -18,71 +21,60 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 export default function Home() {
-
   const [infoList, setInfoList] = useState([]);
 
   const { user } = useMyContext();
 
-  useEffect(() => {
-    async function fetchData() {
-      const resultList = await pb.collection("interaction_nodes").getFullList({
-        filter: `user_id="${user.id}" && interaction="1"`,
-        expand: "node_id.infos.author",
-      });
+  console.log(user);
 
-      const allInfos = [];
-      resultList.forEach((node) => {
-        if (
-          node?.expand?.node_id?.expand?.infos &&
-          node?.expand?.node_id?.expand?.infos.length > 0
-        ) {
-          node.expand.node_id.expand.infos.forEach((info) => {
-            allInfos.push(info);
-          });
-        }
-      });
+  // useEffect(() => {
+  //   console.log("sea");
 
-      //toDo tarihe göre sort olsun bu çalışmıyor
+  //   async function fetchData() {
+  //     const resultList = await pb.collection("interaction_nodes").getFullList({
+  //       filter: `user_id="${user.id}" && interaction="1"`,
+  //       expand: "node_id.infos.author",
+  //     });
 
-      allInfos.sort((a, b) => new Date(b.updated) - new Date(a.updated));
+  //     console.log(resultList)
+  //   }
 
-      setInfoList(allInfos);
-    }
+  //   fetchData();
+  // }, []);
 
-    fetchData();
-  }, []);
+  
 
   return (
     <>
       <PersistentDrawerLeft />
 
       <Container>
-        <Typography sx={{ fontSize: "32px" }}>
-          Info of the topics you like
-        </Typography>
-
-        {infoList.map((info) => (
-          <div key={info.id}>
-            <InfoCard
-              info_id={info.id}
-              profile_user_id={user.id}
-              profile_username={user.username}
-              info_content={info.content}
-              info_created={info.created}
-              info_author={info.expand.author.username}
-              info_source={info.source}
-              info_tags={info.tags}
-              info_title={info.title}
-              info_type={info.type}
-            />
+       
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '80vh' }}>
+        <Card style={{ height: '500px', width: '300px' }}>
+          <CardContent>
+            <Typography variant="h5" component="div">
+              Başlık
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Kart içeriği burada yer alır. Bu kısım, kartın içine ekleyeceğiniz bilgileri içerir.
+            </Typography>
+          </CardContent>
+          <div style={{ display: 'absolute',  top: '16px' }}>
+            <IconButton color="primary" aria-label="like">
+              <ThumbUpIcon />
+            </IconButton>
+            <IconButton color="secondary" aria-label="dislike">
+              <ThumbDownIcon />
+            </IconButton>
+            <IconButton color="default" aria-label="pass">
+              <BlockIcon />
+            </IconButton>
           </div>
-        ))}
+        </Card>
+      </div>
 
-        {/* {infoList.map((info) => (
-          <div onClick={() => handleClick(info)} key={info.id}>
-            <InfoCard infoId={info.id} />
-          </div>
-        ))} */}
+
       </Container>
     </>
   );
